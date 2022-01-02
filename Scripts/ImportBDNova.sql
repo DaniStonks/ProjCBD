@@ -74,8 +74,30 @@ INSERT INTO schStudent.Address
 SELECT 'dummyAddress',0,[addressType]
 FROM dbo.Temp;
 
+INSERT INTO schStudent.MotherJob
+SELECT DISTINCT t.motherJob
+FROM Temp t
+LEFT JOIN schStudent.MotherJob ON t.studentID != motherJobID
+WHERE motherJobID IS NULL;
+
+INSERT INTO schStudent.FatherJob
+SELECT DISTINCT t.fatherJob
+FROM Temp t
+LEFT JOIN schStudent.FatherJob ON t.studentID != fatherJobID
+WHERE fatherJobID IS NULL;
+
+INSERT INTO schStudent.FamilySize
+SELECT DISTINCT t.familySize
+FROM Temp t
+LEFT JOIN schStudent.FamilySize ON t.studentID != familySizeID
+WHERE familySizeID IS NULL;
+
 INSERT INTO schStudent.Family
-SELECT [studentGuardian],[familySize],[familyStatus],[motherEdu],[motherJob],[fatherEdu],[fatherJob]
+SELECT [studentGuardian], [familyStatus],
+	   [motherEdu], [fatherEdu],
+	   dbo.fnFindFatherJobID(fatherJob),
+	   dbo.fnFindMotherJobID(motherJob),
+	   dbo.fnFindFamilySizeID(familySize)
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
@@ -168,23 +190,34 @@ SELECT DISTINCT [schoolSupp],[familySupp],[romanticRel],[familyRel]
 FROM Temp;
 
 INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],1
+SELECT DISTINCT [schoolYear],0
+FROM dbo.Temp;
+
+INSERT INTO schSchool.School
+SELECT DISTINCT [schoolName], 'schoolAddress'
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Tem
+SELECT DISTINCT schoolID, schoolYearID
+FROM schSchool.SchoolYear, schSchool.School;
+
+INSERT INTO schStudent.Student
+SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
+	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
+	   'dummyFirstName', 'dummyLastName',
+	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
+	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
+	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Matricula
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
 FROM dbo.Temp;
 
 INSERT INTO schSchool.Subject
 SELECT DISTINCT disciplina, schoolYearID
 FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
-
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [schoolReason],
-	   [schoolName], [higherEdu], [nurserySchool], [schoolTravelTime], 
-	   [studentNetAccess], 'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
 
 INSERT INTO schSchool.Inscrito
 SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID
@@ -264,8 +297,30 @@ INSERT INTO schStudent.Address
 SELECT 'dummyAddress',0,[addressType]
 FROM dbo.Temp;
 
+INSERT INTO schStudent.MotherJob
+SELECT DISTINCT t.motherJob
+FROM Temp t
+LEFT JOIN schStudent.MotherJob ON t.studentID != motherJobID
+WHERE motherJobID IS NULL;
+
+INSERT INTO schStudent.FatherJob
+SELECT DISTINCT t.fatherJob
+FROM Temp t
+LEFT JOIN schStudent.FatherJob ON t.studentID != fatherJobID
+WHERE fatherJobID IS NULL;
+
+INSERT INTO schStudent.FamilySize
+SELECT DISTINCT t.familySize
+FROM Temp t
+LEFT JOIN schStudent.FamilySize ON t.studentID != familySizeID
+WHERE familySizeID IS NULL;
+
 INSERT INTO schStudent.Family
-SELECT [studentGuardian],[familySize],[familyStatus],[motherEdu],[motherJob],[fatherEdu],[fatherJob]
+SELECT [studentGuardian], [familyStatus],
+	   [motherEdu], [fatherEdu],
+	   dbo.fnFindFatherJobID(fatherJob),
+	   dbo.fnFindMotherJobID(motherJob),
+	   dbo.fnFindFamilySizeID(familySize)
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
@@ -364,23 +419,31 @@ LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
 INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],1
+SELECT DISTINCT [schoolYear],0
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Tem
+SELECT DISTINCT schoolID, schoolYearID
+FROM schSchool.SchoolYear, schSchool.School
+WHERE activeYear = 1;
+
+INSERT INTO schStudent.Student
+SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
+	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
+	   'dummyFirstName', 'dummyLastName',
+	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
+	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
+	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Matricula
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
 FROM dbo.Temp;
 
 INSERT INTO schSchool.Subject
 SELECT DISTINCT disciplina, schoolYearID
 FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
-
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [schoolReason],
-	   [schoolName], [higherEdu], [nurserySchool], [schoolTravelTime], 
-	   [studentNetAccess], 'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
 
 INSERT INTO schSchool.Inscrito
 SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID
@@ -463,8 +526,30 @@ INSERT INTO schStudent.Address
 SELECT 'dummyAddress',0,[addressType]
 FROM dbo.Temp;
 
+INSERT INTO schStudent.MotherJob
+SELECT DISTINCT t.motherJob
+FROM Temp t
+LEFT JOIN schStudent.MotherJob ON t.studentID != motherJobID
+WHERE motherJobID IS NULL;
+
+INSERT INTO schStudent.FatherJob
+SELECT DISTINCT t.fatherJob
+FROM Temp t
+LEFT JOIN schStudent.FatherJob ON t.studentID != fatherJobID
+WHERE fatherJobID IS NULL;
+
+INSERT INTO schStudent.FamilySize
+SELECT DISTINCT t.familySize
+FROM Temp t
+LEFT JOIN schStudent.FamilySize ON t.studentID != familySizeID
+WHERE familySizeID IS NULL;
+
 INSERT INTO schStudent.Family
-SELECT [studentGuardian],[familySize],[familyStatus],[motherEdu],[motherJob],[fatherEdu],[fatherJob]
+SELECT [studentGuardian], [familyStatus],
+	   [motherEdu], [fatherEdu],
+	   dbo.fnFindFatherJobID(fatherJob),
+	   dbo.fnFindMotherJobID(motherJob),
+	   dbo.fnFindFamilySizeID(familySize)
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
@@ -563,23 +648,31 @@ LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
 INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],1
+SELECT DISTINCT [schoolYear],0
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Tem
+SELECT DISTINCT schoolID, schoolYearID
+FROM schSchool.SchoolYear, schSchool.School
+WHERE activeYear = 1;
+
+INSERT INTO schStudent.Student
+SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
+	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
+	   'dummyFirstName', 'dummyLastName',
+	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
+	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
+	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
+FROM dbo.Temp;
+
+INSERT INTO schSchool.Matricula
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
 FROM dbo.Temp;
 
 INSERT INTO schSchool.Subject
 SELECT DISTINCT disciplina, schoolYearID
 FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
-
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [schoolReason],
-	   [schoolName], [higherEdu], [nurserySchool], [schoolTravelTime], 
-	   [studentNetAccess], 'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
 
 INSERT INTO schSchool.Inscrito
 SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID

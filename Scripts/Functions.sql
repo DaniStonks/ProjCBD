@@ -42,8 +42,6 @@ BEGIN
 END
 GO
 
-
-
 GO
 CREATE OR ALTER FUNCTION fnFindCoexistenceID(@schoolSupp CHAR, @familySupp CHAR, @romanticRel CHAR, @familyRel TINYINT)
 RETURNS INT AS
@@ -81,6 +79,47 @@ BEGIN
 			AND @weeklyAlc = weeklyAlc
 			AND @healthStatus = healthStatus)
 
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnFindMotherJobID(@motherJob NVARCHAR(40))
+RETURNS INT AS
+BEGIN
+
+	RETURN (SELECT motherJobID FROM schStudent.MotherJob
+			WHERE @motherJob = motherJob)
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnFindFatherJobID(@fatherJob NVARCHAR(40))
+RETURNS INT AS
+BEGIN
+
+	RETURN (SELECT fatherJobID FROM schStudent.FatherJob
+			WHERE @fatherJob = fatherJob)
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnFindFamilySizeID(@familySize CHAR(4))
+RETURNS INT AS
+BEGIN
+
+	RETURN (SELECT familySizeID FROM schStudent.FamilySize
+			WHERE @familySize = familySize)
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnFindSchoolID(@schoolName VARCHAR(20), @schoolAddress NVARCHAR(70))
+RETURNS INT AS
+BEGIN
+
+	RETURN (SELECT schoolID FROM schSchool.School
+			WHERE @schoolName = schoolName
+			AND @schoolAddress = schoolAddress)
 END
 GO
 

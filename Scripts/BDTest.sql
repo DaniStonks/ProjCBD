@@ -52,7 +52,7 @@ Teste do trigger trg_email_user_password_change
 *****/
 --Se a mudança de password tiver sido executada no teste acima,
 --um email foi "enviado" ao utilizador, este sendo visivel na tabela EmailPW
-SELECT * FROM schStudent.EmailPW;
+SELECT * FROM schStudent.LogsPassword;
 
 /*****
 Teste da procedure spCriarTokenPassword
@@ -76,7 +76,7 @@ EXEC dbo.spMudarPasswordToken 'guardian3@escola.pt', @token, 'pass', 'pass';
 Teste da procedure spVerNotasAluno
 *****/
 EXEC dbo.spVerNotasAluno '201700107@escola.pt', 'password' --Encarregado ve as notas do seu educando
-EXEC dbo.spVerNotasAluno 'guardian3@escola.pt', 'password3' --Encarregado ve as notas do seu educando
+EXEC dbo.spVerNotasAluno 'guardian3@escola.pt', 'pass' --Encarregado ve as notas do seu educando
 EXEC dbo.spVerNotasAluno 'guardian@escola.pt', 'ohn' --Será lançado um erro pois o utilizador não existe
 
 /*****

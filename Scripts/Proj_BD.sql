@@ -136,19 +136,6 @@ CREATE TABLE schStudent.Address
   PRIMARY KEY (addressID)
 )ON StudentFG;
 
-CREATE TABLE schStudent.Family
-(
-  familyID INT NOT NULL IDENTITY(1,1),
-  studentGuardian VARCHAR(10) NOT NULL,
-  familySize CHAR(3) CHECK (familySize = 'LE3' OR familySize = 'GT3'),
-  familyStatus CHAR(1) CHECK (familyStatus = 'T' OR familyStatus = 'A'),
-  motherEdu TINYINT CHECK (motherEdu >= 0 AND motherEdu <= 4),
-  motherJob NVARCHAR(15),
-  fatherEdu TINYINT CHECK (fatherEdu >= 0 AND fatherEdu <= 4),
-  fatherJob NVARCHAR(15),
-  PRIMARY KEY (familyID)
-)ON StudentFG;
-
 CREATE TABLE schStudent.UserAutentication
 (
   autenticationID INT IDENTITY(1,1), 
@@ -166,11 +153,34 @@ CREATE TABLE schSchool.SchoolYear
   PRIMARY KEY (schoolYearID)
 )ON SchoolFG;
 
-CREATE TABLE schStudent.EmailPW
+CREATE TABLE schStudent.MotherJob
 (
-  userEmail VARCHAR(50),
-  emailContents NVARCHAR(100)
+  motherJobID INT IDENTITY(1,1),
+  motherJob NVARCHAR(40) NOT NULL,
+  PRIMARY KEY (motherJobID)
 )ON StudentFG;
+
+CREATE TABLE schStudent.FatherJob
+(
+  fatherJobID INT IDENTITY(1,1),
+  fatherJob NVARCHAR(40) NOT NULL,
+  PRIMARY KEY (fatherJobID)
+)ON StudentFG;
+
+CREATE TABLE schStudent.FamilySize
+(
+  familySizeID INT IDENTITY(1,1),
+  familySize VARCHAR(4) NOT NULL,
+  PRIMARY KEY (familySizeID)
+)ON StudentFG;
+
+CREATE TABLE schSchool.School
+(
+  schoolID INT IDENTITY(1,1),
+  schoolName VARCHAR(20) NOT NULL,
+  schoolAddress NVARCHAR(70) NOT NULL,
+  PRIMARY KEY (schoolID)
+)ON SchoolFG;
 
 /*****************************
 	--- Entidades FK ---
@@ -180,11 +190,6 @@ CREATE TABLE schStudent.Student
   studentNumber INT,
   studentGender CHAR(1) CHECK (studentGender = 'M' OR studentGender = 'F'),
   studentBDate DATE,
-  schoolReason VARCHAR(20),
-  schoolName CHAR(2) NOT NULL CHECK (schoolName = 'GP' OR schoolName = 'MS'),
-  higherEdu CHAR(1) CHECK (higherEdu = 'Y' OR higherEdu = 'N'),
-  nurserySchool CHAR(1) CHECK (nurserySchool = 'Y' OR nurserySchool = 'N'),
-  schoolTravelTime TINYINT CHECK (schoolTravelTime >= 1 AND schoolTravelTime <= 4),
   studentNetAccess CHAR(1) CHECK (studentNetAccess = 'Y' OR studentNetAccess = 'N'),
   firstName NVARCHAR(20) NOT NULL,
   lastName NVARCHAR(20) NOT NULL,
@@ -192,6 +197,19 @@ CREATE TABLE schStudent.Student
   healthID INT NOT NULL,
   activityID INT NOT NULL,
   PRIMARY KEY (studentNumber),
+)ON StudentFG;
+
+CREATE TABLE schStudent.Family
+(
+  familyID INT NOT NULL IDENTITY(1,1),
+  familyGuardian VARCHAR(20) NOT NULL,
+  familyStatus CHAR(1) CHECK (familyStatus = 'T' OR familyStatus = 'A'),
+  motherEdu TINYINT CHECK (motherEdu >= 0 AND motherEdu <= 4),
+  fatherEdu TINYINT CHECK (fatherEdu >= 0 AND fatherEdu <= 4),
+  fatherJobID INT NOT NULL,
+  motherJobID INT NOT NULL,
+  familySizeID INT NOT NULL,
+  PRIMARY KEY (familyID)
 )ON StudentFG;
 
 CREATE TABLE schSchool.Grade
@@ -206,19 +224,6 @@ CREATE TABLE schSchool.Grade
   studentNumber INT NOT NULL,
   PRIMARY KEY (gradeID),
 )ON SchoolFG
-
-CREATE TABLE schLogs.ClosedGrade
-(
-  gradeLogID INT IDENTITY (1,1),
-  classFailures TINYINT CHECK (classFailures >= 0 AND classFailures <= 4),
-  subjectAbsences TINYINT CHECK (subjectAbsences >= 0 AND subjectAbsences <= 93),
-  period1Grade FLOAT CHECK (period1Grade >= 0 AND period1Grade <= 20),
-  period2Grade FLOAT CHECK (period2Grade >= 0 AND period2Grade <= 20),
-  period3Grade FLOAT CHECK (period3Grade >= 0 AND period3Grade <= 20),
-  subjectID INT NOT NULL,
-  studentNumber INT NOT NULL,
-  logDate DATETIME NOT NULL
-)ON LogsFG
 
 CREATE TABLE schSchool.Subject
 (
@@ -261,6 +266,23 @@ REFERENCES schSchool.SchoolYear(schoolYearID)
 ON DELETE NO ACTION
 ON UPDATE CASCADE;
 
+ALTER TABLE schStudent.Family ADD FOREIGN KEY (fatherJobID) 
+REFERENCES schStudent.FatherJob(fatherJobID)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+
+ALTER TABLE schStudent.Family ADD FOREIGN KEY (motherJobID) 
+REFERENCES schStudent.MotherJob(motherJobID)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+
+ALTER TABLE schStudent.Family ADD FOREIGN KEY (familySizeID) 
+REFERENCES schStudent.FamilySize(familySizeID)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+-----
+-----
+
 /*****************************
  --- Entidades Associação ---
 ******************************/
@@ -274,16 +296,6 @@ CREATE TABLE schSchool.Inscrito
   FOREIGN KEY (studentNumber) REFERENCES schStudent.Student(studentNumber),
   FOREIGN KEY (subjectID) REFERENCES schSchool.Subject(subjectID)
 )ON SchoolFG;
-
-CREATE TABLE schLogs.ClosedInscritos
-(
-  inscritosLogID INT IDENTITY (1,1),
-  weekStudyTime TINYINT,
-  paidClasses CHAR(1) CHECK (paidClasses = 'Y' OR paidClasses = 'N'),
-  studentNumber INT NOT NULL,
-  subjectID INT NOT NULL,
-  logDate DATETIME NOT NULL
-)ON LogsFG;
 
 CREATE TABLE schStudent.Vive
 (
@@ -304,3 +316,58 @@ CREATE TABLE schStudent.Acede
   FOREIGN KEY(autenticationID) REFERENCES schStudent.Userautentication(autenticationID),
   FOREIGN KEY(familyID) REFERENCES schStudent.Family(familyID)
 )ON StudentFG;
+
+CREATE TABLE schSchool.Matricula
+(
+  schoolReason VARCHAR(20),
+  higherEdu CHAR(1),
+  nurserySchool CHAR(1),
+  schoolTravelTime TINYINT,
+  schoolID INT NOT NULL,
+  studentNumber INT NOT NULL,
+  PRIMARY KEY (studentNumber),
+  FOREIGN KEY (studentNumber) REFERENCES schStudent.Student(studentNumber),
+  FOREIGN KEY(schoolID) REFERENCES schSchool.School(schoolID),
+)ON SchoolFG;
+
+CREATE TABLE schSchool.Tem --mudar?
+(
+  schoolID INT NOT NULL,
+  schoolYearID INT NOT NULL,
+  PRIMARY KEY (schoolID, schoolYearID),
+  FOREIGN KEY (schoolYearID) REFERENCES schSchool.SchoolYear(schoolYearID),
+  FOREIGN KEY(schoolID) REFERENCES schSchool.School(schoolID),
+)ON SchoolFG;
+
+/*****************************
+	--- Entidades Log ---
+*****************************/
+
+CREATE TABLE schLogs.ClosedGrade
+(
+  gradeLogID INT IDENTITY (1,1),
+  classFailures TINYINT CHECK (classFailures >= 0 AND classFailures <= 4),
+  subjectAbsences TINYINT CHECK (subjectAbsences >= 0 AND subjectAbsences <= 93),
+  period1Grade FLOAT CHECK (period1Grade >= 0 AND period1Grade <= 20),
+  period2Grade FLOAT CHECK (period2Grade >= 0 AND period2Grade <= 20),
+  period3Grade FLOAT CHECK (period3Grade >= 0 AND period3Grade <= 20),
+  subjectID INT NOT NULL,
+  studentNumber INT NOT NULL,
+  logDate DATETIME NOT NULL
+)ON LogsFG
+
+CREATE TABLE schLogs.ClosedInscritos
+(
+  inscritosLogID INT IDENTITY (1,1),
+  weekStudyTime TINYINT,
+  paidClasses CHAR(1) CHECK (paidClasses = 'Y' OR paidClasses = 'N'),
+  studentNumber INT NOT NULL,
+  subjectID INT NOT NULL,
+  logDate DATETIME NOT NULL
+)ON LogsFG;
+
+CREATE TABLE schStudent.LogsPassword
+(
+  userEmail VARCHAR(50),
+  emailEvent CHAR(1)
+)ON LogsFG;

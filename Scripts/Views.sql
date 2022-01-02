@@ -53,12 +53,13 @@ GO
 GO
 CREATE OR ALTER VIEW view_studentFamilyInformation
 AS
-SELECT CONCAT(stu.firstName, ' ' ,stu.lastName) as 'Nome Estudante', f.studentGuardian as 'Encarregado Educacao',
-			f.familySize as 'Tamanho da Familia', f.familyStatus as 'Estado familiar', a.address as 'Morada', a.addressType 'Tipo Morada'
+SELECT CONCAT(stu.firstName, ' ' ,stu.lastName) as 'Nome Estudante', f.familyGuardian as 'Encarregado Educacao',
+			fs.familySize as 'Tamanho da Familia', f.familyStatus as 'Estado familiar', a.address as 'Morada', a.addressType 'Tipo Morada'
 FROM [schStudent].[Student] stu
 	JOIN [schStudent].[Vive] v ON stu.studentNumber = v.studentNumber
 	JOIN [schStudent].[Family] f ON v.familyID = f.familyID
 	JOIN [schStudent].[Address] a ON v.addressID = a.addressID
+	JOIN schStudent.FamilySize fs ON f.familySizeID = fs.familySizeID
 GO
 
 GO

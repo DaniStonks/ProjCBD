@@ -66,8 +66,8 @@ BEGIN
 	BEGIN
 		DECLARE @email VARCHAR(40) = (SELECT userEmail FROM inserted)
 
-		INSERT INTO schStudent.EmailPW (userEmail, emailContents)
-		VALUES (@email, 'A sua palavra passe foi alterada.')
+		INSERT INTO schStudent.LogsPassword(userEmail, emailEvent)
+		VALUES (@email, 'U')
 	END
 END
 GO
