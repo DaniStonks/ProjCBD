@@ -23,15 +23,15 @@ CREATE DATABASE Proj_DB_RS
 ON
 PRIMARY
 (NAME = Proj_DB_RS,
- FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
- --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
  SIZE=10MB,
  MAXSIZE=60MB,
  FILEGROWTH=10)
 LOG ON
 (NAME = Proj_DB_RS_log,
- FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
- --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
  SIZE=5MB,
  MAXSIZE=30MB,
  FILEGROWTH=10);
@@ -49,8 +49,8 @@ ADD FILEGROUP StudentFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_student,
- FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
- --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
  SIZE=5MB,
  MAXSIZE=15MB,
  FILEGROWTH=3MB)
@@ -63,12 +63,26 @@ ADD FILEGROUP SchoolFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_school,
- FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
- --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
  SIZE=1MB,
  MAXSIZE=5MB,
  FILEGROWTH=1MB)
 TO FILEGROUP SchoolFG;
+GO
+
+ALTER DATABASE Proj_DB_RS
+ADD FILEGROUP IdiomFG;
+
+ALTER DATABASE Proj_DB_RS
+ADD FILE
+(NAME = Proj_DB_RS_idiom,
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
+ SIZE=1MB,
+ MAXSIZE=5MB,
+ FILEGROWTH=1MB)
+TO FILEGROUP IdiomFG;
 GO
 
 ALTER DATABASE Proj_DB_RS
@@ -77,8 +91,8 @@ ADD FILEGROUP LogsFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_logs,
- FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
- --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
+ --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
+ FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
  SIZE=1MB,
  MAXSIZE=5MB,
  FILEGROWTH=1MB)
@@ -95,6 +109,9 @@ CREATE SCHEMA schSchool
 GO
 
 CREATE SCHEMA schLogs
+GO
+
+CREATE SCHEMA schIdiom
 GO
 /*****************************
 	--- Entidades PK ---
@@ -181,6 +198,14 @@ CREATE TABLE schSchool.School
   schoolAddress NVARCHAR(70) NOT NULL,
   PRIMARY KEY (schoolID)
 )ON SchoolFG;
+
+CREATE TABLE schIdiom.Idiom
+(
+  idiomID INT IDENTITY (1,1),
+  idiomName NVARCHAR(15) NOT NULL,
+  PRIMARY KEY (idiomID)
+)ON IdiomFG;
+
 
 /*****************************
 	--- Entidades FK ---
@@ -280,6 +305,7 @@ ALTER TABLE schStudent.Family ADD FOREIGN KEY (familySizeID)
 REFERENCES schStudent.FamilySize(familySizeID)
 ON DELETE NO ACTION
 ON UPDATE CASCADE;
+
 -----
 -----
 
@@ -330,7 +356,7 @@ CREATE TABLE schSchool.Matricula
   FOREIGN KEY(schoolID) REFERENCES schSchool.School(schoolID),
 )ON SchoolFG;
 
-CREATE TABLE schSchool.Tem --mudar?
+CREATE TABLE schSchool.Contem
 (
   schoolID INT NOT NULL,
   schoolYearID INT NOT NULL,
@@ -338,6 +364,34 @@ CREATE TABLE schSchool.Tem --mudar?
   FOREIGN KEY (schoolYearID) REFERENCES schSchool.SchoolYear(schoolYearID),
   FOREIGN KEY(schoolID) REFERENCES schSchool.School(schoolID),
 )ON SchoolFG;
+
+CREATE TABLE schIdiom.TranslationFamily
+(
+  translation VARCHAR(25) NOT NULL,
+  idiomID INT NOT NULL,
+  familyID INT NOT NULL,
+  FOREIGN KEY (idiomID) REFERENCES schIdiom.Idiom(idiomID),
+  FOREIGN KEY(familyID) REFERENCES schStudent.Family(familyID)
+)ON IdiomFG
+
+CREATE TABLE schIdiom.TranslationMJob
+(
+  translation VARCHAR(25) NOT NULL,
+  idiomID INT NOT NULL,
+  motherJobID INT NOT NULL,
+  FOREIGN KEY (idiomID) REFERENCES schIdiom.Idiom(idiomID),
+  FOREIGN KEY(motherJobID) REFERENCES schStudent.MotherJob(motherJobID)
+)ON IdiomFG
+
+CREATE TABLE schIdiom.TranslationFJob
+(
+  translation VARCHAR(25) NOT NULL,
+  idiomID INT NOT NULL,
+  fatherJobID INT NOT NULL,
+  FOREIGN KEY (idiomID) REFERENCES schIdiom.Idiom(idiomID),
+  FOREIGN KEY(fatherJobID) REFERENCES schStudent.FatherJob(fatherJobID)
+)ON IdiomFG
+
 
 /*****************************
 	--- Entidades Log ---
