@@ -11,7 +11,6 @@
 *	Turma: 2ºL_EI-SW-04			Sala: F356
 *
 ***************************************************/
---UPDATE schSchool.SchoolYear SET activeYear = 1 WHERE schoolYear = 2019
 USE Proj_DB_RS;
 /*****************************
    --- Importação dados ---
@@ -176,6 +175,8 @@ UPDATE Temp
 SET romanticRel = 'N'
 WHERE romanticRel = 'no';
 
+ALTER TABLE Temp ADD newStudentID INT;
+
 --Inserir os dados nas tabelas respectivas
 INSERT INTO [schStudent].[Activity]
 SELECT DISTINCT [freeTime], [goOutFriends], [extraActivities]
@@ -201,17 +202,70 @@ INSERT INTO schSchool.Tem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School;
 
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
-	   'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
+/*** Cursor para introduzir os novos estudantes ***/
+	-- Declarar variaveis
+	DECLARE @newStudentNumber INT
+	DECLARE @count INT = 0
+	DECLARE @oldStudentNumber INT
+	DECLARE @newIDCount INT
+    DECLARE @studentGender CHAR(1)
+    DECLARE @studentBDate VARCHAR(20)
+    DECLARE @studentNetAccess CHAR(1)
+	DECLARE @schoolSupp CHAR(1)
+	DECLARE @familySupp CHAR(1)
+	DECLARE @romanticRel CHAR(1)
+	DECLARE @familyRel TINYINT
+	DECLARE @dailyAlc TINYINT
+	DECLARE @weeklyAlc TINYINT 
+	DECLARE @healthStatus TINYINT
+	DECLARE @freeTime TINYINT
+	DECLARE @goOutFriends TINYINT
+	DECLARE @extraActivities CHAR(1)
+	-- Declarar o cursor para a querie
+    DECLARE addStudentsCursor CURSOR READ_ONLY
+    FOR
+        SELECT DISTINCT studentID, studentGender, studentBDate,
+		studentNetAccess, schoolSupp, familySupp, romanticRel,
+		familyRel, dailyAlc, weeklyAlc, healthStatus,
+		freeTime, goOutFriends, extraActivities FROM Temp
+	
+	-- Abrir o cursor
+    OPEN addStudentsCursor
+
+	-- Obter os valores para as variaveis
+    FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+	-- Um loop para imprimir os resultados
+    WHILE @@FETCH_STATUS = 0
+		BEGIN
+			INSERT INTO schStudent.Student(studentNumber, studentGender, studentBDate,
+						studentNetAccess, firstName, lastName, relationID, healthID,
+						activityID)
+			VALUES (dbo.fnMakeStudentNumber(), @studentGender, CONVERT(DATE, @studentBDate,103), 
+					@studentNetAccess, 'dummyFirstName', 'dummyLastName',
+					dbo.fnFindCoexistenceID(@schoolSupp, @familySupp, @romanticRel, @familyRel),
+					dbo.fnFindHealthID(@dailyAlc, @weeklyAlc, @healthStatus),
+					dbo.fnFindActivityID(@freeTime, @goOutFriends, @extraActivities))
+
+					SET @newStudentNumber = (SELECT TOP 1 studentNumber FROM schStudent.Student ORDER BY studentNumber DESC)
+
+					UPDATE Temp SET newStudentID = @newStudentNumber
+					WHERE studentID = @oldStudentNumber --Guardar o novo id guardado na tabela student para ser usado nos proximos imports
+
+			-- Obter os proximos valores para as variaveis ate chegar ao fim
+			FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+
+		END
+    CLOSE addStudentsCursor
+    DEALLOCATE addStudentsCursor
 
 INSERT INTO schSchool.Matricula
-SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), newStudentID
 FROM dbo.Temp;
 
 INSERT INTO schSchool.Subject
@@ -220,18 +274,18 @@ FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
 
 INSERT INTO schSchool.Inscrito
-SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID
+SELECT DISTINCT [weekStudyTime], paidClasses, newStudentID, subjectID
 FROM dbo.Temp, schSchool.Subject
 WHERE subjectID IN (SELECT subjectID FROM schSchool.Subject);
 
 INSERT INTO schSchool.Grade
 SELECT [classFailures], [subjectAbsences], [period1Grade], [period2Grade],
-	   [period3Grade], subjectID, dbo.fnMakeStudentNumber(studentID)
+	   [period3Grade], subjectID, newStudentID
 FROM dbo.Temp
 JOIN schSchool.Subject ON disciplina = subjectName;
 
 INSERT INTO schStudent.Vive
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), studentID, studentID
+SELECT DISTINCT newStudentID, studentID, studentID
 FROM dbo.Temp;
 
 DROP TABLE Temp;
@@ -279,7 +333,7 @@ CREATE TABLE Temp
   period1Grade FLOAT,
   period2Grade FLOAT,
   period3Grade FLOAT,
-  disciplina NVARCHAR(20)
+  disciplina NVARCHAR(20),
 );
 
 --Carregar os dados para a tabela temporaria
@@ -399,6 +453,8 @@ UPDATE Temp
 SET romanticRel = 'N'
 WHERE romanticRel = 'no';
 
+ALTER TABLE Temp ADD newStudentID INT;
+
 --Inserir os dados nas tabelas respectivas
 INSERT INTO [schStudent].[Activity]
 SELECT DISTINCT t.[freeTime], t.[goOutFriends], t.[extraActivities]
@@ -418,49 +474,85 @@ FROM Temp t
 LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
-INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],0
-FROM dbo.Temp;
+EXEC spFecharAno;
+EXEC spAbrirAno;
 
 INSERT INTO schSchool.Tem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School
 WHERE activeYear = 1;
 
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
-	   'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
-
-INSERT INTO schSchool.Matricula
-SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
-FROM dbo.Temp;
-
 INSERT INTO schSchool.Subject
 SELECT DISTINCT disciplina, schoolYearID
 FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
 
+EXEC spInscreverAlunosChumbados;
+
+/*** Cursor para introduzir os novos estudantes ***/
+	-- Declarar o cursor para a querie
+    DECLARE addStudentsCursor CURSOR READ_ONLY
+    FOR
+        SELECT DISTINCT studentID, studentGender, studentBDate,
+		studentNetAccess, schoolSupp, familySupp, romanticRel,
+		familyRel, dailyAlc, weeklyAlc, healthStatus,
+		freeTime, goOutFriends, extraActivities FROM Temp
+	
+	-- Abrir o cursor
+    OPEN addStudentsCursor
+
+	-- Obter os valores para as variaveis
+    FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+	-- Um loop para imprimir os resultados
+    WHILE @@FETCH_STATUS = 0
+		BEGIN
+			INSERT INTO schStudent.Student(studentNumber, studentGender, studentBDate,
+						studentNetAccess, firstName, lastName, relationID, healthID,
+						activityID)
+			VALUES (dbo.fnMakeStudentNumber(), @studentGender, CONVERT(DATE, @studentBDate,103), 
+					@studentNetAccess, 'dummyFirstName', 'dummyLastName',
+					dbo.fnFindCoexistenceID(@schoolSupp, @familySupp, @romanticRel, @familyRel),
+					dbo.fnFindHealthID(@dailyAlc, @weeklyAlc, @healthStatus),
+					dbo.fnFindActivityID(@freeTime, @goOutFriends, @extraActivities))
+
+					SET @newStudentNumber = (SELECT TOP 1 studentNumber FROM schStudent.Student ORDER BY studentNumber DESC)
+
+					UPDATE Temp SET newStudentID = @newStudentNumber
+					WHERE studentID = @oldStudentNumber --Guardar o novo id guardado na tabela student para ser usado nos proximos imports
+
+			-- Obter os proximos valores para as variaveis ate chegar ao fim
+			FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+
+		END
+    CLOSE addStudentsCursor
+    DEALLOCATE addStudentsCursor
+
+INSERT INTO schSchool.Matricula
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), newStudentID
+FROM dbo.Temp;
+
 INSERT INTO schSchool.Inscrito
-SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID
+SELECT DISTINCT [weekStudyTime], paidClasses, newStudentID, subjectID
 FROM dbo.Temp, schSchool.Subject s
 JOIN schSchool.SchoolYear sy ON s.schoolYearID = sy.schoolYearID
 WHERE activeYear = 1;
 
 INSERT INTO schSchool.Grade
 SELECT [classFailures], [subjectAbsences], [period1Grade], [period2Grade],
-	   [period3Grade], s.subjectID, dbo.fnMakeStudentNumber(studentID)
+	   [period3Grade], s.subjectID, newStudentID
 FROM dbo.Temp
 JOIN schSchool.Subject s ON disciplina = subjectName
 JOIN schSchool.SchoolYear sy ON s.schoolYearID = sy.schoolYearID
 WHERE activeYear = 1;
 
 INSERT INTO schStudent.Vive
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), studentID, studentID
+SELECT DISTINCT newStudentID, studentID, studentID
 FROM dbo.Temp;
 
 DROP TABLE Temp;
@@ -628,6 +720,8 @@ UPDATE Temp
 SET romanticRel = 'N'
 WHERE romanticRel = 'no';
 
+ALTER TABLE Temp ADD newStudentID INT;
+
 --Inserir os dados nas tabelas respectivas
 INSERT INTO [schStudent].[Activity]
 SELECT DISTINCT t.[freeTime], t.[goOutFriends], t.[extraActivities]
@@ -647,49 +741,85 @@ FROM Temp t
 LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
-INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],0
-FROM dbo.Temp;
+EXEC spFecharAno;
+EXEC spAbrirAno;
 
 INSERT INTO schSchool.Tem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School
 WHERE activeYear = 1;
 
-INSERT INTO schStudent.Student
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), [studentGender],
-	   CONVERT(DATE,[studentBDate],103), [studentNetAccess],
-	   'dummyFirstName', 'dummyLastName',
-	   dbo.fnFindCoexistenceID([schoolSupp], [familySupp], [romanticRel], [familyRel]),
-	   dbo.fnFindHealthID([dailyAlc], [weeklyAlc], [healthStatus]),             --estas 3 funções vao usar os dados lidos para buscar os IDs correspondentes nas suas tabelas respectivas
-	   dbo.fnFindActivityID([freeTime], [goOutFriends], [extraActivities])
-FROM dbo.Temp;
-
-INSERT INTO schSchool.Matricula
-SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), dbo.fnMakeStudentNumber(studentID)
-FROM dbo.Temp;
-
 INSERT INTO schSchool.Subject
 SELECT DISTINCT disciplina, schoolYearID
 FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
 
+EXEC spInscreverAlunosChumbados;
+
+/*** Cursor para introduzir os novos estudantes ***/
+	-- Declarar o cursor para a querie
+    DECLARE addStudentsCursor CURSOR READ_ONLY
+    FOR
+        SELECT DISTINCT studentID, studentGender, studentBDate,
+		studentNetAccess, schoolSupp, familySupp, romanticRel,
+		familyRel, dailyAlc, weeklyAlc, healthStatus,
+		freeTime, goOutFriends, extraActivities FROM Temp
+	
+	-- Abrir o cursor
+    OPEN addStudentsCursor
+
+	-- Obter os valores para as variaveis
+    FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+	-- Um loop para imprimir os resultados
+    WHILE @@FETCH_STATUS = 0
+		BEGIN
+			INSERT INTO schStudent.Student(studentNumber, studentGender, studentBDate,
+						studentNetAccess, firstName, lastName, relationID, healthID,
+						activityID)
+			VALUES (dbo.fnMakeStudentNumber(), @studentGender, CONVERT(DATE, @studentBDate,103), 
+					@studentNetAccess, 'dummyFirstName', 'dummyLastName',
+					dbo.fnFindCoexistenceID(@schoolSupp, @familySupp, @romanticRel, @familyRel),
+					dbo.fnFindHealthID(@dailyAlc, @weeklyAlc, @healthStatus),
+					dbo.fnFindActivityID(@freeTime, @goOutFriends, @extraActivities))
+
+					SET @newStudentNumber = (SELECT TOP 1 studentNumber FROM schStudent.Student ORDER BY studentNumber DESC)
+
+					UPDATE Temp SET newStudentID = @newStudentNumber
+					WHERE studentID = @oldStudentNumber --Guardar o novo id guardado na tabela student para ser usado nos proximos imports
+
+			-- Obter os proximos valores para as variaveis ate chegar ao fim
+			FETCH NEXT FROM addStudentsCursor INTO 
+		@oldStudentNumber, @studentGender, @studentBDate, @studentNetAccess,
+		@schoolSupp, @familySupp, @romanticRel, @familyRel, @dailyAlc,
+		@weeklyAlc, @healthStatus, @freeTime, @goOutFriends, @extraActivities
+
+		END
+    CLOSE addStudentsCursor
+    DEALLOCATE addStudentsCursor
+
+INSERT INTO schSchool.Matricula
+SELECT DISTINCT [schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], dbo.fnFindSchoolID(schoolName, 'schoolAddress'), newStudentID
+FROM dbo.Temp;
+
 INSERT INTO schSchool.Inscrito
-SELECT DISTINCT [weekStudyTime], paidClasses, dbo.fnMakeStudentNumber(studentID), subjectID
+SELECT DISTINCT [weekStudyTime], paidClasses, newStudentID, subjectID
 FROM dbo.Temp, schSchool.Subject s
 JOIN schSchool.SchoolYear sy ON s.schoolYearID = sy.schoolYearID
 WHERE activeYear = 1;
 
 INSERT INTO schSchool.Grade
 SELECT [classFailures], [subjectAbsences], [period1Grade], [period2Grade],
-	   [period3Grade], s.subjectID, dbo.fnMakeStudentNumber(studentID)
+	   [period3Grade], s.subjectID, newStudentID
 FROM dbo.Temp
 JOIN schSchool.Subject s ON disciplina = subjectName
 JOIN schSchool.SchoolYear sy ON s.schoolYearID = sy.schoolYearID
 WHERE activeYear = 1;
 
 INSERT INTO schStudent.Vive
-SELECT DISTINCT dbo.fnMakeStudentNumber(studentID), studentID, studentID
+SELECT DISTINCT newStudentID, studentID, studentID
 FROM dbo.Temp;
 
 DROP TABLE Temp;

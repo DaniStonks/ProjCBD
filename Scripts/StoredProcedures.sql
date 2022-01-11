@@ -243,10 +243,9 @@ GO
 CREATE OR ALTER PROCEDURE spInscreverAlunosChumbados
 AS
 BEGIN
-	--Vai buscar o ano previo e insere um novo registo na tabela SchoolYear
 	DECLARE @previousYear INT = (SELECT schoolYear
 								FROM [schSchool].[SchoolYear]
-								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))) - 1 
+								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))) - 1
 
 	--Tabela temporaria com todos os alunos que chumbaram no ano anterior
 	CREATE TABLE TempFailedStudents
@@ -265,8 +264,10 @@ BEGIN
 	FROM schStudent.Student s
 	JOIN schLogs.ClosedInscritos logI ON logI.studentNumber = s.studentNumber
 	JOIN schSchool.Subject sub ON sub.subjectID = logI.subjectID
-	WHERE s.studentNumber LIKE CONCAT(@previousYear, '%')
-	AND dbo.fnCalcularNotaFinalAluno(s.studentNumber, logI.subjectID) < 10
+	WHERE dbo.fnCalcularNotaFinalAluno(s.studentNumber, logI.subjectID) < 10
+	AND logI.subjectID IN (SELECT subjectID FROM schSchool.Subject s
+						   JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+						   WHERE schoolYear = @previousYear)
 	
 	INSERT INTO schSchool.Inscrito
 	SELECT weekStudyTime, paidClasses,
