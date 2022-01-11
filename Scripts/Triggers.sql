@@ -40,18 +40,6 @@ BEGIN
 END
 GO
 
-DROP TRIGGER schSchool.trg_change_activeYear;
-GO
-CREATE TRIGGER schSchool.trg_change_activeYear
-ON schSchool.SchoolYear
-AFTER INSERT
-AS
-BEGIN
-	UPDATE schSchool.SchoolYear SET activeYear = 0 WHERE activeYear = 1;
-	UPDATE schSchool.SchoolYear SET activeYear = 1 WHERE schoolYear = (SELECT schoolYear FROM inserted)
-END
-GO
-
 DROP TRIGGER schStudent.trg_email_user_password_change;
 GO
 CREATE TRIGGER schStudent.trg_email_user_password_change

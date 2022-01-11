@@ -11,7 +11,7 @@
 *	Turma: 2ºL_EI-SW-04			Sala: F356
 *
 ***************************************************/
-
+--UPDATE schSchool.SchoolYear SET activeYear = 1 WHERE schoolYear = 2019
 USE Proj_DB_RS;
 /*****************************
    --- Importação dados ---
@@ -190,7 +190,7 @@ SELECT DISTINCT [schoolSupp],[familySupp],[romanticRel],[familyRel]
 FROM Temp;
 
 INSERT INTO schSchool.SchoolYear
-SELECT DISTINCT [schoolYear],0
+SELECT DISTINCT [schoolYear],1
 FROM dbo.Temp;
 
 INSERT INTO schSchool.School

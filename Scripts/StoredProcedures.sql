@@ -212,3 +212,71 @@ BEGIN
 		THROW 61555, 'O Aluno não consta na base de dados', 1
 END
 GO
+
+GO
+CREATE OR ALTER PROCEDURE spFecharAno
+AS
+BEGIN
+	TRUNCATE TABLE schSchool.Inscrito
+	TRUNCATE TABLE schSchool.Grade
+	UPDATE schSchool.SchoolYear SET activeYear = 0 WHERE activeYear = 1
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spAbrirAno
+AS
+BEGIN
+	--Erro caso ano recente ainda nao esteja fechado
+	--TO DO
+
+	--Vai buscar o ano previo e insere um novo registo na tabela SchoolYear
+	DECLARE @previousYear INT = (SELECT schoolYear
+								FROM [schSchool].[SchoolYear]
+								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear')))
+	INSERT INTO schSchool.SchoolYear(schoolYear, activeYear)
+	VALUES(@previousYear + 1, 1)
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spInscreverAlunosChumbados
+AS
+BEGIN
+	--Vai buscar o ano previo e insere um novo registo na tabela SchoolYear
+	DECLARE @previousYear INT = (SELECT schoolYear
+								FROM [schSchool].[SchoolYear]
+								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))) - 1 
+
+	--Tabela temporaria com todos os alunos que chumbaram no ano anterior
+	CREATE TABLE TempFailedStudents
+	(
+	studentNumber INT,
+	subjectName NVARCHAR(20),
+	weekStudyTime TINYINT,
+	paidClasses CHAR(1),
+	finalGrade INT,
+	);
+
+	--Inserção dos alunos nas tabelas temporarias
+	INSERT INTO TempFailedStudents
+	SELECT s.studentNumber, subjectName, logI.weekStudyTime, logI.paidClasses,
+		   dbo.fnCalcularNotaFinalAluno(s.studentNumber, logI.subjectID)
+	FROM schStudent.Student s
+	JOIN schLogs.ClosedInscritos logI ON logI.studentNumber = s.studentNumber
+	JOIN schSchool.Subject sub ON sub.subjectID = logI.subjectID
+	WHERE s.studentNumber LIKE CONCAT(@previousYear, '%')
+	AND dbo.fnCalcularNotaFinalAluno(s.studentNumber, logI.subjectID) < 10
+	
+	INSERT INTO schSchool.Inscrito
+	SELECT weekStudyTime, paidClasses,
+		   studentNumber, dbo.fnFindSubjectIDByName(subjectName)
+	FROM TempFailedStudents
+
+	INSERT INTO schSchool.Grade
+	SELECT 0, 0, 0, 0, 0, dbo.fnFindSubjectIDByName(subjectName), studentNumber
+	FROM TempFailedStudents
+
+	DROP TABLE TempFailedStudents;
+END
+GO

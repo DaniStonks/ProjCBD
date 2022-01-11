@@ -24,6 +24,7 @@ BEGIN
 END
 GO
 
+/*
 --Criação de funcões de auxilio no import
 GO
 CREATE OR ALTER FUNCTION fnMakeStudentNumber(@studentID INT)
@@ -41,6 +42,7 @@ BEGIN
 
 END
 GO
+*/
 
 GO
 CREATE OR ALTER FUNCTION fnFindCoexistenceID(@schoolSupp CHAR, @familySupp CHAR, @romanticRel CHAR, @familyRel TINYINT)
@@ -124,6 +126,18 @@ END
 GO
 
 GO
+CREATE OR ALTER FUNCTION fnFindSubjectIDByName(@subjectName NVARCHAR(20))
+RETURNS INT AS
+BEGIN
+
+	RETURN (SELECT subjectID FROM schSchool.Subject s
+			JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+			WHERE s.subjectName = @subjectName
+			AND activeYear = 1)
+END
+GO
+
+GO
 CREATE OR ALTER FUNCTION fnAutenticarUtilizador(@email VARCHAR(50), @password VARCHAR(128))
 RETURNS BIT
 BEGIN
@@ -146,23 +160,40 @@ BEGIN
 END
 GO
 
-/**** tentativa de melhorar a função de modo a nao precisar de id
---Criação de funcões de auxilio no import
 GO
-CREATE OR ALTER FUNCTION fnMakeStudentNumber(@studentID INT)
+CREATE OR ALTER FUNCTION fnCalcularNotaFinalAluno(@studentNumber INT, @subjectID INT)
 RETURNS INT AS
 BEGIN
-    DECLARE @schoolYear INT = CONVERT(VARCHAR(10), (SELECT schoolYear FROM schSchool.SchoolYear WHERE activeYear = 1))
-	DECLARE @lastInsertedID VARCHAR(9) = CONVERT(VARCHAR(9), (SELECT MAX(studentNumber) FROM schStudent.Student))
-	DECLARE @splitId TABLE = STRING_SPLIT(@lastInsertedID, '0')
-
-	SET @studentID = CONVERT(VARCHAR(10), @studentID)
-
-	DECLARE @paddedID VARCHAR(10)
-	SET @paddedID = REPLACE(STR(@studentID, 5), SPACE(1), '0')
-
-    RETURN CONVERT(INT, CONCAT(@schoolYear, @paddedID))
-
+	DECLARE @finalGrade INT = (SELECT (period1Grade+period2Grade+period3Grade)/3
+							   FROM schLogs.ClosedGrade g
+							   JOIN schStudent.Student s ON s.studentNumber = g.studentNumber
+							   JOIN schSchool.Subject sub ON sub.subjectID = g.subjectID
+							   WHERE s.studentNumber = @studentNumber
+							   AND g.subjectID = @subjectID)
+	RETURN @finalGrade
 END
 GO
-****/
+
+GO
+CREATE OR ALTER FUNCTION fnMakeStudentNumber()
+RETURNS INT AS
+BEGIN
+	DECLARE @currentYear INT = CONVERT(VARCHAR(10), (SELECT schoolYear
+													 FROM [schSchool].[SchoolYear]
+													 WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))))
+	DECLARE @paddedID VARCHAR(10)
+
+	--Se não existir alunos no ano letivo corrente ira gerar o id inicial
+	IF NOT EXISTS(SELECT TOP 1 * FROM schStudent.Student WHERE studentNumber LIKE CONCAT(@currentYear, '%'))
+	BEGIN
+		SET @paddedID = REPLACE(STR('1', 5), SPACE(1), '0')
+		RETURN CONVERT(INT, CONCAT(@currentYear, @paddedID))
+	END
+
+	DECLARE @id INT = (SELECT TOP 1 studentNumber
+					  FROM schStudent.Student
+					  ORDER BY studentNumber DESC)
+
+	RETURN @id + 1
+END
+GO
