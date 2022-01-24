@@ -11,8 +11,41 @@
 *	Turma: 2ºL_EI-SW-04			Sala: F356
 *
 ***************************************************/
-
 USE Proj_DB_RS;
+
+GO
+CREATE OR ALTER PROCEDURE spOpenKeys
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        OPEN SYMMETRIC KEY MyKEY
+        DECRYPTION BY CERTIFICATE MyCERT
+    END TRY
+    BEGIN CATCH
+        -- Handle non-existant key here
+    END CATCH
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spAddSubjectToYear(@subjectName NVARCHAR(20), @schoolYear INT)
+AS
+BEGIN
+
+	DECLARE @schoolYearID INT = (SELECT schoolYearID FROM schSchool.SchoolYear
+								 WHERE schoolYear = @schoolYear)
+
+	IF (@schoolYearID is null)
+		THROW 50300, 'O ano letivo inserido não existe', 1
+
+	INSERT INTO
+	schSchool.Subject(subjectName, schoolYearID)
+	VALUES
+	(@subjectName, @schoolYearID)
+END
+GO
 
 GO
 CREATE OR ALTER PROCEDURE spRegistarUtilizadorAutenticacao(@password VARCHAR(20), @id INT)
@@ -112,9 +145,6 @@ BEGIN
 			--ira inscrever o aluno na disciplina correta e tambem ira criar um registo de avaliações correspondente
             INSERT INTO schSchool.Inscrito([weekStudyTime], [paidClasses], [studentNumber], [subjectID])
             VALUES (@weekStudyTime, @paidClasses, @studentNumber, @subjectID)
-
-			INSERT INTO schSchool.Grade([subjectID], [studentNumber])
-            VALUES (@subjectID, @studentNumber)
         END
 		ELSE
 			THROW 61554, 'O Aluno já se encontra inscrito na disciplina', 1
@@ -189,24 +219,50 @@ BEGIN
 GO
 
 GO
-CREATE OR ALTER PROCEDURE spLancarNotas(@studentNumber INT, @subjectName VARCHAR(20), @grade1 FLOAT, @grade2 FLOAT, @grade3 FLOAT)
+CREATE OR ALTER PROCEDURE spLancarNotas(@studentNumber INT, @subjectName VARCHAR(20), @grade1 FLOAT, @grade2 FLOAT, @grade3 FLOAT, @classFailures TINYINT, @subjectAbsences TINYINT)
 AS
 BEGIN
 	--Verificar se o aluno existe
     IF @studentNumber IN (SELECT studentNumber FROM [schStudent].[Student]) 
     BEGIN
-        DECLARE @subjectID INT = (SELECT sub.subjectId FROM schSchool.Subject sub
-								  JOIN schSchool.SchoolYear sy ON sub.schoolYearID = sy.schoolYearID
-                                  WHERE @subjectName = sub.subjectName AND activeYear = 1)
+        DECLARE @subjectID INT = dbo.fnFindSubjectIDByName(@subjectName)
         --Verificar se o aluno esta inscrito na disciplina
         IF @studentNumber IN (SELECT studentNumber FROM [schSchool].[Inscrito]
                                 WHERE subjectId = @subjectID)
         BEGIN
-			UPDATE schSchool.Grade SET period1Grade = @grade1, period2Grade = @grade2 , period3Grade = @grade3
-			WHERE subjectID = @subjectID AND studentNumber = @studentNumber
+			INSERT INTO schSchool.Grade(classFailures, subjectAbsences,
+										period1Grade, period2Grade, period3Grade,
+										subjectID, studentNumber)
+            VALUES (@classFailures, @subjectAbsences, @grade1,
+					@grade2, @grade3, @subjectID, @studentNumber)
 		END
 		ELSE
 			THROW 61556, 'O Aluno não se encontra inscrito na disciplina', 1
+    END
+	ELSE
+		THROW 61555, 'O Aluno não consta na base de dados', 1
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spMatricularAluno(@schoolReason VARCHAR(20), @higherEdu CHAR(1), @nurserySchool CHAR(1), @schoolTravelTime TINYINT, @schoolName VARCHAR(50), @studentNumber INT)
+AS
+BEGIN
+	--Verificar se o aluno existe
+    IF @studentNumber IN (SELECT studentNumber FROM [schStudent].[Student]) 
+    BEGIN
+        DECLARE @schoolID INT = (SELECT schoolID FROM schSchool.School
+                                  WHERE schoolName = @schoolName)
+        --Verificar se o aluno ja se encontra na disciplina
+        IF @studentNumber NOT IN (SELECT studentNumber FROM [schSchool].Matricula
+                                  WHERE schoolID = @schoolID)
+        BEGIN 
+			--ira inscrever o aluno na disciplina correta e tambem ira criar um registo de avaliações correspondente
+            INSERT INTO schSchool.Matricula([schoolReason], [higherEdu], [nurserySchool], [schoolTravelTime], [schoolID], [studentNumber])
+            VALUES (@schoolReason, @higherEdu, @nurserySchool, @schoolTravelTime, @schoolID, @studentNumber)
+        END
+		ELSE
+			THROW 61560, 'O Aluno já se encontra matriculado', 1
     END
 	ELSE
 		THROW 61555, 'O Aluno não consta na base de dados', 1
@@ -274,10 +330,53 @@ BEGIN
 		   studentNumber, dbo.fnFindSubjectIDByName(subjectName)
 	FROM TempFailedStudents
 
-	INSERT INTO schSchool.Grade
-	SELECT 0, 0, 0, 0, 0, dbo.fnFindSubjectIDByName(subjectName), studentNumber
-	FROM TempFailedStudents
-
 	DROP TABLE TempFailedStudents;
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spTestGenerateFailedStudentGrades
+AS
+BEGIN
+	DECLARE @previousYear INT = (SELECT schoolYear
+								FROM [schSchool].[SchoolYear]
+								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))) - 1
+	DECLARE @subjectName NVARCHAR(20)
+	DECLARE @studentNumber INT
+	DECLARE @grade1 FLOAT
+	DECLARE @grade2 FLOAT
+	DECLARE @grade3 FLOAT
+
+    DECLARE gradesStudentCursor CURSOR READ_ONLY
+    FOR
+        SELECT s.studentNumber, subjectName
+		FROM schStudent.Student s
+		JOIN schLogs.ClosedInscritos logI ON logI.studentNumber = s.studentNumber
+		JOIN schSchool.Subject sub ON sub.subjectID = logI.subjectID
+		WHERE dbo.fnCalcularNotaFinalAluno(s.studentNumber, logI.subjectID) < 10
+		AND logI.subjectID IN (SELECT subjectID FROM schSchool.Subject s
+							   JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+							   WHERE schoolYear = @previousYear)
+	
+	-- Abrir o cursor
+    OPEN gradesStudentCursor
+
+	-- Obter os valores para as variaveis
+    FETCH NEXT FROM gradesStudentCursor INTO @studentNumber, @subjectName
+
+	-- Um loop para imprimir os resultados
+    WHILE @@FETCH_STATUS = 0
+		BEGIN
+			SET @grade1 = (SELECT FLOOR(RAND()*21))
+			SET @grade2 = (SELECT FLOOR(RAND()*21))
+			SET @grade3 = (SELECT FLOOR(RAND()*21))
+
+			exec spLancarNotas @studentNumber, @subjectName, @grade1, @grade2, @grade3, 0, 0
+
+			-- Obter os proximos valores para as variaveis ate chegar ao fim
+			FETCH NEXT FROM gradesStudentCursor INTO @studentNumber, @subjectName
+		END
+    CLOSE gradesStudentCursor
+    DEALLOCATE gradesStudentCursor
 END
 GO

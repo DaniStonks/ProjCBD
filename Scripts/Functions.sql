@@ -15,6 +15,18 @@
 USE Proj_DB_RS;
 
 GO
+CREATE OR ALTER FUNCTION fnEncriptarMorada(@address VARCHAR(128))
+RETURNS VARBINARY(256)
+BEGIN
+	DECLARE @returnAddress VARBINARY(256)
+	
+	SET @returnAddress = ENCRYPTBYKEY(KEY_GUID('AddressTableKey'), @address)
+
+	RETURN @returnAddress
+END
+GO
+
+GO
 CREATE OR ALTER FUNCTION fnCodificaPassword (@password VARCHAR(20))
 RETURNS VARCHAR(128)
 BEGIN
@@ -23,26 +35,6 @@ BEGIN
 
 END
 GO
-
-/*
---Criação de funcões de auxilio no import
-GO
-CREATE OR ALTER FUNCTION fnMakeStudentNumber(@studentID INT)
-RETURNS INT AS
-BEGIN
-    DECLARE @schoolYear INT
-
-	SET @schoolYear = CONVERT(VARCHAR(10), (SELECT schoolYear FROM schSchool.SchoolYear WHERE activeYear = 1))
-	SET @studentID = CONVERT(VARCHAR(10), @studentID)
-
-	DECLARE @paddedID VARCHAR(10)
-	SET @paddedID = REPLACE(STR(@studentID, 5), SPACE(1), '0')
-
-    RETURN CONVERT(INT, CONCAT(@schoolYear, @paddedID))
-
-END
-GO
-*/
 
 GO
 CREATE OR ALTER FUNCTION fnFindCoexistenceID(@schoolSupp CHAR, @familySupp CHAR, @romanticRel CHAR, @familyRel TINYINT)

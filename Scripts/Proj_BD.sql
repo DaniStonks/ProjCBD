@@ -23,17 +23,17 @@ CREATE DATABASE Proj_DB_RS
 ON
 PRIMARY
 (NAME = Proj_DB_RS,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS.mdf',
  SIZE=10MB,
  MAXSIZE=60MB,
  FILEGROWTH=10)
 LOG ON
 (NAME = Proj_DB_RS_log,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\Proj_DB_RS_log.ldf',
  SIZE=5MB,
- MAXSIZE=30MB,
+ MAXSIZE=300MB,
  FILEGROWTH=10);
  GO 
 
@@ -49,8 +49,8 @@ ADD FILEGROUP StudentFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_student,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaStudent.ndf',
  SIZE=5MB,
  MAXSIZE=15MB,
  FILEGROWTH=3MB)
@@ -63,8 +63,8 @@ ADD FILEGROUP SchoolFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_school,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaSchool.ndf',
  SIZE=1MB,
  MAXSIZE=5MB,
  FILEGROWTH=1MB)
@@ -77,8 +77,8 @@ ADD FILEGROUP IdiomFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_idiom,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaIdiom.ndf',
  SIZE=1MB,
  MAXSIZE=5MB,
  FILEGROWTH=1MB)
@@ -91,11 +91,11 @@ ADD FILEGROUP LogsFG;
 ALTER DATABASE Proj_DB_RS
 ADD FILE
 (NAME = Proj_DB_RS_logs,
- --FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
- FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
- SIZE=1MB,
- MAXSIZE=5MB,
- FILEGROWTH=1MB)
+ FILENAME='E:\SQL(Uni)\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
+ --FILENAME='C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\SchemaLogs.ndf',
+ SIZE=5MB,
+ MAXSIZE=100MB,
+ FILEGROWTH=5MB)
 TO FILEGROUP LogsFG;
 GO
 
@@ -147,7 +147,7 @@ CREATE TABLE schStudent.Coexistence
 CREATE TABLE schStudent.Address
 (
   addressID INT IDENTITY(1,1),
-  address NVARCHAR(70),
+  address VARBINARY(256),
   addressMain BIT DEFAULT(0),
   addressType CHAR(1) CHECK (addressType = 'U' OR addressType = 'R'),
   PRIMARY KEY (addressID)
@@ -194,7 +194,7 @@ CREATE TABLE schStudent.FamilySize
 CREATE TABLE schSchool.School
 (
   schoolID INT IDENTITY(1,1),
-  schoolName VARCHAR(20) NOT NULL,
+  schoolName VARCHAR(50) NOT NULL,
   schoolAddress NVARCHAR(70) NOT NULL,
   PRIMARY KEY (schoolID)
 )ON SchoolFG;
@@ -218,9 +218,9 @@ CREATE TABLE schStudent.Student
   studentNetAccess CHAR(1) CHECK (studentNetAccess = 'Y' OR studentNetAccess = 'N'),
   firstName NVARCHAR(20) NOT NULL,
   lastName NVARCHAR(20) NOT NULL,
-  relationID INT NOT NULL,
-  healthID INT NOT NULL,
-  activityID INT NOT NULL,
+  relationID INT,
+  healthID INT,
+  activityID INT,
   PRIMARY KEY (studentNumber),
 )ON StudentFG;
 

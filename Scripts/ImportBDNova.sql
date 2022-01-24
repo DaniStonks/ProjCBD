@@ -198,7 +198,7 @@ INSERT INTO schSchool.School
 SELECT DISTINCT [schoolName], 'schoolAddress'
 FROM dbo.Temp;
 
-INSERT INTO schSchool.Tem
+INSERT INTO schSchool.Contem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School;
 
@@ -477,7 +477,7 @@ WHERE relationID IS NULL;
 EXEC spFecharAno;
 EXEC spAbrirAno;
 
-INSERT INTO schSchool.Tem
+INSERT INTO schSchool.Contem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School
 WHERE activeYear = 1;
@@ -744,7 +744,7 @@ WHERE relationID IS NULL;
 EXEC spFecharAno;
 EXEC spAbrirAno;
 
-INSERT INTO schSchool.Tem
+INSERT INTO schSchool.Contem
 SELECT DISTINCT schoolID, schoolYearID
 FROM schSchool.SchoolYear, schSchool.School
 WHERE activeYear = 1;
