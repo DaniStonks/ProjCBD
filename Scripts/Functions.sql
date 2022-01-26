@@ -189,3 +189,67 @@ BEGIN
 	RETURN @id + 1
 END
 GO
+
+GO
+CREATE OR ALTER FUNCTION fnCalcularTaxaCrescimento(@schoolYear INT)
+RETURNS FLOAT AS
+BEGIN
+	IF @schoolYear-1 NOT IN (SELECT schoolYear FROM [schSchool].schoolYear)
+		RETURN 0;
+	ELSE
+		DECLARE @oldYearStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedInscritos
+											WHERE subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																WHERE schoolYear = @schoolYear-1))
+		DECLARE @newYearStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedInscritos
+											WHERE subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																WHERE schoolYear = @schoolYear))
+		RETURN ROUND((@newYearStudentCount-@oldYearStudentCount)/@oldYearStudentCount, 3)
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnCalcularPercentagemNotaMaiorQue15(@schoolYear INT)
+RETURNS FLOAT AS
+BEGIN
+		DECLARE @allStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedGrade
+											WHERE subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																WHERE schoolYear = @schoolYear))
+		DECLARE @gteFifteenStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedGrade
+												   WHERE dbo.fnCalcularNotaFinalAluno(studentNumber, subjectID) >= 15
+												   AND subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																	 JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																	 WHERE schoolYear = @schoolYear))
+		RETURN FLOOR((@gteFifteenStudentCount/@allStudentCount)*100)
+END
+GO
+
+GO
+CREATE OR ALTER FUNCTION fnCalcularEscolaComMelhorMediaAno(@schoolYear INT)
+RETURNS FLOAT AS
+BEGIN
+	SELECT schoolYear, schoolName, ROUND((AVG(period1Grade+period2Grade+period3Grade)/3), 2) as 'Nota media'
+	FROM schLogs.ClosedGrade st
+	JOIN schSchool.Subject s ON st.subjectID = s.subjectID
+	JOIN schSchool.SchoolYear y ON s.schoolYearID = y.schoolYearID
+	JOIN schSchool.Matricula m ON m.studentNumber = st.studentNumber
+	JOIN schSchool.School sc ON sc.schoolID = m.schoolID
+	WHERE st.subjectID IN (SELECT subjectID FROM schSchool.Subject s
+					  JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+					  WHERE schoolYear IN (SELECT schoolYear FROM schSchool.SchoolYear))
+	GROUP BY schoolName, schoolYear
+	ORDER BY schoolYear;
+		DECLARE @allStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedGrade
+											WHERE subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																WHERE schoolYear = @schoolYear))
+		DECLARE @gteFifteenStudentCount DECIMAL = (SELECT COUNT(DISTINCT studentNumber) FROM schLogs.ClosedGrade
+												   WHERE dbo.fnCalcularNotaFinalAluno(studentNumber, subjectID) >= 15
+												   AND subjectID IN (SELECT subjectID FROM schSchool.Subject s
+																	 JOIN schSchool.SchoolYear sy ON sy.schoolYearID = s.schoolYearID
+																	 WHERE schoolYear = @schoolYear))
+		RETURN FLOOR((@gteFifteenStudentCount/@allStudentCount)*100)
+END
+GO
