@@ -70,7 +70,7 @@ WITH
 )
 
 INSERT INTO schStudent.Address
-SELECT 'dummyAddress',0,[addressType]
+SELECT dbo.fnEncriptarMorada('dummyAddress'),0,[addressType]
 FROM dbo.Temp;
 
 INSERT INTO schStudent.MotherJob
@@ -348,7 +348,7 @@ WITH
 )
 
 INSERT INTO schStudent.Address
-SELECT 'dummyAddress',0,[addressType]
+SELECT dbo.fnEncriptarMorada('dummyAddress'),0,[addressType]
 FROM dbo.Temp;
 
 INSERT INTO schStudent.MotherJob
@@ -488,6 +488,7 @@ FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
 
 EXEC spInscreverAlunosChumbados;
+EXEC spTestGenerateFailedStudentGrades;
 
 /*** Cursor para introduzir os novos estudantes ***/
 	-- Declarar o cursor para a querie
@@ -615,7 +616,7 @@ WITH
 )
 
 INSERT INTO schStudent.Address
-SELECT 'dummyAddress',0,[addressType]
+SELECT dbo.fnEncriptarMorada('dummyAddress'),0,[addressType]
 FROM dbo.Temp;
 
 INSERT INTO schStudent.MotherJob
@@ -755,6 +756,7 @@ FROM dbo.Temp, schSchool.SchoolYear
 WHERE activeYear = 1;
 
 EXEC spInscreverAlunosChumbados;
+EXEC spTestGenerateFailedStudentGrades;
 
 /*** Cursor para introduzir os novos estudantes ***/
 	-- Declarar o cursor para a querie

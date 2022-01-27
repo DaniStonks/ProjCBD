@@ -35,8 +35,7 @@ WITH ALGORITHM = AES_128 ENCRYPTION
 BY CERTIFICATE AddressCert
 GO
 
-select * from schStudent.Address
-
+/*
 /* Visualização dos dados desencriptados */
 GO
 OPEN SYMMETRIC KEY AddressTableKey DECRYPTION
@@ -44,3 +43,4 @@ BY CERTIFICATE AddressCert
 SELECT CONVERT(VARCHAR(100), DECRYPTBYKEY(address)) AS DecryptedAddress
 FROM schStudent.Address
 GO
+*/

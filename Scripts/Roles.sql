@@ -13,24 +13,6 @@
 ***************************************************/
 USE Proj_DB_RS;
 
-GO
-CREATE SECURITY POLICY UserFilter
-ADD FILTER PREDICATE dbo.fn_SalesSecurity(UserName) 
-ON dbo.Sales
-WITH (STATE = ON);
-GO
-
-
-CREATE FUNCTION dbo.fn_SchoolSecurity(@schoolName AS sysname)
-RETURNS TABLE
-WITH SCHEMABINDING
-AS
-    RETURN SELECT 1 AS fn_SalesSecurity_Result
-    -- Logic for filter predicate
-    WHERE @schoolName = USER_NAME() 
-    OR USER_NAME() = 'CEO';
-GO
-
 /**********************
  * ROLE ADMINISTRADOR *
  **********************/
@@ -72,10 +54,15 @@ GO
 GO
 CREATE ROLE UtilizadorGP;
 
-GRANT SELECT ON SCHEMA::schLogs TO UtilizadorGP;
-GRANT SELECT ON SCHEMA::schSchool TO UtilizadorGP;
-GRANT SELECT ON SCHEMA::schStudent TO UtilizadorGP;
-
+GRANT SELECT ON OBJECT::[schLogs].[view_logInscritosGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schLogs].[view_logGradesGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_schoolYearInformationGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentGradesGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentInscritosGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentActivitiesGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentFamilyInformationGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsHealthStatusGP] TO UtilizadorGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsInformationGP] TO UtilizadorGP;
 GO
 
 /************************
@@ -84,9 +71,15 @@ GO
 GO
 CREATE ROLE UtilizadorMS;
 
-GRANT SELECT ON SCHEMA::schLogs TO UtilizadorMS;
-GRANT SELECT ON SCHEMA::schSchool TO UtilizadorMS;
-GRANT SELECT ON SCHEMA::schStudent TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schLogs].[view_logInscritosMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schLogs].[view_logGradesMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_schoolYearInformationMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentGradesMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentInscritosMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentActivitiesMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentFamilyInformationMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsHealthStatusMS] TO UtilizadorMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsInformationMS] TO UtilizadorMS;
 GO
 
 /************************
@@ -95,27 +88,37 @@ GO
 GO
 CREATE ROLE EscolaGP;
 
-GRANT ALTER ON SCHEMA::schLogs TO Administrador;
-GRANT CONTROL ON SCHEMA::schLogs TO Administrador;
-GRANT SELECT ON SCHEMA::schLogs TO Administrador;
-GRANT DELETE ON SCHEMA::schLogs TO Administrador;
-GRANT INSERT ON SCHEMA::schLogs TO Administrador;
-GRANT UPDATE ON SCHEMA::schLogs TO Administrador;
+GRANT CONTROL ON SCHEMA::schLogs TO EscolaGP;
+GRANT INSERT ON SCHEMA::schLogs TO EscolaGP;
+GRANT UPDATE ON SCHEMA::schLogs TO EscolaGP;
 
-GRANT ALTER ON SCHEMA::schSchool TO Administrador;
-GRANT CONTROL ON SCHEMA::schSchool TO Administrador;
-GRANT SELECT ON SCHEMA::schSchool TO Administrador;
-GRANT DELETE ON SCHEMA::schSchool TO Administrador;
-GRANT INSERT ON SCHEMA::schSchool TO Administrador;
-GRANT UPDATE ON SCHEMA::schSchool TO Administrador;
+GRANT ALTER ON OBJECT::schStudent.Student TO EscolaGP;
+GRANT CONTROL ON OBJECT::schStudent.Student TO EscolaGP;
+GRANT DELETE ON OBJECT::schStudent.Student TO EscolaGP;
+GRANT INSERT ON OBJECT::schStudent.Student TO EscolaGP;
+GRANT UPDATE ON OBJECT::schStudent.Student TO EscolaGP;
 
-GRANT ALTER ON SCHEMA::schStudent TO Administrador;
-GRANT CONTROL ON SCHEMA::schStudent TO Administrador;
-GRANT SELECT ON SCHEMA::schStudent TO Administrador;
-GRANT DELETE ON SCHEMA::schStudent TO Administrador;
-GRANT INSERT ON SCHEMA::schStudent TO Administrador;
-GRANT UPDATE ON SCHEMA::schStudent TO Administrador;
+GRANT ALTER ON OBJECT::schSchool.Grade TO EscolaGP;
+GRANT CONTROL ON OBJECT::schSchool.Grade TO EscolaGP;
+GRANT DELETE ON OBJECT::schSchool.Grade TO EscolaGP;
+GRANT INSERT ON OBJECT::schSchool.Grade TO EscolaGP;
+GRANT UPDATE ON OBJECT::schSchool.Grade TO EscolaGP;
 
+GRANT ALTER ON OBJECT::schSchool.Inscrito TO EscolaGP;
+GRANT CONTROL ON OBJECT::schSchool.Inscrito TO EscolaGP;
+GRANT DELETE ON OBJECT::schSchool.Inscrito TO EscolaGP;
+GRANT INSERT ON OBJECT::schSchool.Inscrito TO EscolaGP;
+GRANT UPDATE ON OBJECT::schSchool.Inscrito TO EscolaGP;
+
+GRANT SELECT ON OBJECT::[schLogs].[view_logInscritosGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schLogs].[view_logGradesGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_schoolYearInformationGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentGradesGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentInscritosGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentActivitiesGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentFamilyInformationGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsHealthStatusGP] TO EscolaGP;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsInformationGP] TO EscolaGP;
 GO
 
 /************************
@@ -123,27 +126,66 @@ GO
  ************************/
  GO
  CREATE ROLE EscolaMS;
- GO
+
+GRANT CONTROL ON OBJECT::schLogs.ClosedInscritos TO EscolaMS;
+GRANT INSERT ON OBJECT::schLogs.ClosedInscritos TO EscolaMS;
+GRANT UPDATE ON OBJECT::schLogs.ClosedInscritos TO EscolaMS;
+
+GRANT CONTROL ON OBJECT::schLogs.ClosedGrade TO EscolaMS;
+GRANT INSERT ON OBJECT::schLogs.ClosedGrade TO EscolaMS;
+GRANT UPDATE ON OBJECT::schLogs.ClosedGrade TO EscolaMS;
+
+GRANT ALTER ON OBJECT::schStudent.Student TO EscolaMS;
+GRANT CONTROL ON OBJECT::schStudent.Student TO EscolaMS;
+GRANT DELETE ON OBJECT::schStudent.Student TO EscolaMS;
+GRANT INSERT ON OBJECT::schStudent.Student TO EscolaMS;
+GRANT UPDATE ON OBJECT::schStudent.Student TO EscolaMS;
+
+GRANT ALTER ON OBJECT::schSchool.Grade TO EscolaMS;
+GRANT CONTROL ON OBJECT::schSchool.Grade TO EscolaMS;
+GRANT DELETE ON OBJECT::schSchool.Grade TO EscolaMS;
+GRANT INSERT ON OBJECT::schSchool.Grade TO EscolaMS;
+GRANT UPDATE ON OBJECT::schSchool.Grade TO EscolaMS;
+
+GRANT ALTER ON OBJECT::schSchool.Inscrito TO EscolaMS;
+GRANT CONTROL ON OBJECT::schSchool.Inscrito TO EscolaMS;
+GRANT DELETE ON OBJECT::schSchool.Inscrito TO EscolaMS;
+GRANT INSERT ON OBJECT::schSchool.Inscrito TO EscolaMS;
+GRANT UPDATE ON OBJECT::schSchool.Inscrito TO EscolaMS;
+
+GRANT SELECT ON OBJECT::[schLogs].[view_logInscritosMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schLogs].[view_logGradesMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_schoolYearInformationMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentGradesMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schSchool].[view_studentInscritosMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentActivitiesMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentFamilyInformationMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsHealthStatusMS] TO EscolaMS;
+GRANT SELECT ON OBJECT::[schStudent].[view_studentsInformationMS] TO EscolaMS;
+GO
 
 
 /*********************
  *   Criação Users   *
  *********************/
---3) Crie 3 logins com a seguinte designação: UserS1, UserS2, UserS3.
-CREATE LOGIN Adminstrador WITH PASSWORD='123';
+CREATE LOGIN Admin WITH PASSWORD='123';
 CREATE LOGIN UserGP WITH PASSWORD='123';
 CREATE LOGIN UserMS WITH PASSWORD='123';
-CREATE LOGIN EscolaGP WITH PASSWORD='123';
 CREATE LOGIN EscolaMS WITH PASSWORD='123';
+CREATE LOGIN EscolaGP WITH PASSWORD='123';
 
---4) Crie 3 utilizadores, um para cada login, com o schema [Developer_Schema] pré-definido
-CREATE USER Adminstrador FOR LOGIN Adminstrador;
+CREATE USER Admins FOR LOGIN Admin;
 CREATE USER UserGP FOR LOGIN UserGP;
-CREATE USER UserS3 FOR LOGIN UserS3;
-CREATE USER [UserS1] FOR LOGIN [UserS1];
-CREATE USER UserS2 FOR LOGIN UserS2;
-CREATE USER UserS3 FOR LOGIN UserS3;
+CREATE USER UserMS FOR LOGIN UserMS;
+CREATE USER EscMS FOR LOGIN EscolaMS;
+CREATE USER EscGP FOR LOGIN EscolaGP;
 
-EXEC sp_addrolemember N'Developer_Role', N'UserS1';
-EXEC sp_addrolemember N'Client_Role', N'UserS2';
-EXEC sp_addrolemember N'Reader_Role', N'UserS3';
+EXEC sp_addrolemember 'Administrador', 'Admins';
+EXEC sp_addrolemember 'UtilizadorGP', 'UserGP';
+EXEC sp_addrolemember 'UtilizadorMS', 'UserMS';
+EXEC sp_addrolemember 'EscolaMS', 'EscMS';
+EXEC sp_addrolemember 'EscolaGP', 'EscGP';
+
+EXECUTE AS USER = 'EscMS'
+SELECT * FROM schStudent.Family
+REVERT

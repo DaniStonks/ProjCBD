@@ -65,7 +65,8 @@ GO
 GO
 CREATE OR ALTER VIEW view_schoolYearInformation
 AS
-SELECT schy.schoolYear as 'Ano-Letivo', schy.activeYear as 'Ano ativo?', s.subjectName as 'Disciplinas'
+SELECT schy.schoolYear as 'Ano Letivo', schy.activeYear as 'Ano ativo?', s.subjectName as 'Disciplinas'
 FROM [schSchool].[SchoolYear] schy
 	JOIN [schSchool].[Subject] s ON schy.schoolYearID = s.schoolYearID
 GO
+

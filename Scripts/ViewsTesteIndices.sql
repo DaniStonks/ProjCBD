@@ -51,6 +51,21 @@ FROM
 WHERE rn = 1
 GO
 
+--Indice para a view de taxa de crescimento
+CREATE NONCLUSTERED INDEX indexCrescimento ON [schLogs].ClosedInscritos
+(
+	[subjectID]
+)
+
+--Indice para view da nota maior que 15
+CREATE NONCLUSTERED INDEX indexNota15 ON [schLogs].[ClosedGrade]
+(
+	[subjectID]
+)
+
+CREATE NONCLUSTERED INDEX index15Recom
+ON [schLogs].[ClosedGrade] ([subjectID])
+INCLUDE ([studentNumber])
 
 SELECT * FROM view_AlunosNotaMaiorQue15
 SELECT * FROM view_taxaCrescimento
