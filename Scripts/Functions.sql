@@ -191,6 +191,14 @@ END
 GO
 
 GO
+CREATE OR ALTER FUNCTION fnBuscarAnoAberto()
+RETURNS INT AS
+BEGIN
+	RETURN (SELECT schoolYear FROM schSchool.SchoolYear WHERE activeYear = 1)
+END
+GO
+
+GO
 CREATE OR ALTER FUNCTION fnCalcularTaxaCrescimento(@schoolYear INT)
 RETURNS FLOAT AS
 BEGIN

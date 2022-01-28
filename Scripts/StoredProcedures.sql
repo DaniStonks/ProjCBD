@@ -269,6 +269,7 @@ BEGIN
 END
 GO
 
+/*
 GO
 CREATE OR ALTER PROCEDURE spFecharAno
 AS
@@ -292,6 +293,31 @@ BEGIN
 								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear')))
 	INSERT INTO schSchool.SchoolYear(schoolYear, activeYear)
 	VALUES(@previousYear + 1, 1)
+END
+GO
+*/
+
+GO
+CREATE OR ALTER PROCEDURE spFecharAno(@schoolYear INT)
+AS
+BEGIN
+	TRUNCATE TABLE schSchool.Inscrito
+	TRUNCATE TABLE schSchool.Grade
+	UPDATE schSchool.SchoolYear SET activeYear = 0 WHERE schoolYear = @schoolYear
+END
+GO
+
+GO
+CREATE OR ALTER PROCEDURE spAbrirAno(@schoolYear INT)
+AS
+BEGIN
+	--Erro caso ano recente ainda nao esteja fechado
+	--TO DO
+	IF @schoolYear IN (SELECT schoolYear FROM schSchool.SchoolYear)
+		UPDATE schSchool.SchoolYear SET activeYear = 1 WHERE schoolYear = @schoolYear
+	ELSE
+		INSERT INTO schSchool.SchoolYear(schoolYear, activeYear)
+		VALUES(@schoolYear, 1)
 END
 GO
 

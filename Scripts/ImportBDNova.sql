@@ -474,8 +474,8 @@ FROM Temp t
 LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
-EXEC spFecharAno;
-EXEC spAbrirAno;
+EXEC spFecharAno 2017;
+EXEC spAbrirAno 2018;
 
 INSERT INTO schSchool.Contem
 SELECT DISTINCT schoolID, schoolYearID
@@ -742,8 +742,8 @@ FROM Temp t
 LEFT JOIN schStudent.Coexistence ON t.studentID != relationID
 WHERE relationID IS NULL;
 
-EXEC spFecharAno;
-EXEC spAbrirAno;
+EXEC spFecharAno 2018;
+EXEC spAbrirAno 2019;
 
 INSERT INTO schSchool.Contem
 SELECT DISTINCT schoolID, schoolYearID
@@ -825,3 +825,5 @@ SELECT DISTINCT newStudentID, studentID, studentID
 FROM dbo.Temp;
 
 DROP TABLE Temp;
+
+exec spFecharAno 2019

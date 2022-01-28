@@ -138,11 +138,12 @@ CREATE OR ALTER PROCEDURE spMakeTestYears
 AS
 BEGIN
     DECLARE @Contador INT = 0
+	DECLARE @year INT
 
 	exec spCreateSchools
 
-	INSERT INTO schSchool.SchoolYear(schoolYear, activeYear)
-	VALUES(1960, 1)
+	exec spAbrirAno 1960
+	SET @year = dbo.fnBuscarAnoAberto()
 
 	exec spTestSubjects 
 	
