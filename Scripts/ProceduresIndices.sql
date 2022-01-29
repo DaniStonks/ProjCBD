@@ -129,8 +129,6 @@ BEGIN
 END
 GO
 
---exec spMakeTestYears
-
 GO
 CREATE OR ALTER PROCEDURE spMakeTestYears
 AS
@@ -162,3 +160,5 @@ BEGIN
 	END
 END
 GO
+
+exec spMakeTestYears
