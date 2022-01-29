@@ -29,7 +29,7 @@ WHERE schoolName = 'GP'
 GO
 
 GO
-CREATE OR ALTER VIEW	
+CREATE OR ALTER VIEW schStudent.view_studentsHealthStatusGP
 AS
 SELECT CONCAT(stu.firstName, ' ' ,stu.lastName) as 'Nome Estudante', h.healthStatus as 'Estado de Saude', 
 			h.dailyAlc as 'Alcool Diario', h.weeklyAlc as 'Alcool Semanal' 

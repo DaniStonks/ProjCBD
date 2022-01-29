@@ -37,6 +37,28 @@ END
 GO
 
 GO
+CREATE OR ALTER FUNCTION fnMakeStudentNumber()
+RETURNS INT AS
+BEGIN
+	DECLARE @currentYear INT = CONVERT(VARCHAR(10), dbo.fnBuscarAnoAberto())
+	DECLARE @paddedID VARCHAR(10)
+
+	--Se não existir alunos no ano letivo corrente ira gerar o id inicial
+	IF NOT EXISTS(SELECT TOP 1 * FROM schStudent.Student WHERE studentNumber LIKE CONCAT(@currentYear, '%'))
+	BEGIN
+		SET @paddedID = REPLACE(STR('1', 5), SPACE(1), '0')
+		RETURN CONVERT(INT, CONCAT(@currentYear, @paddedID))
+	END
+
+	DECLARE @id INT = (SELECT TOP 1 studentNumber FROM schStudent.Student
+					   WHERE studentNumber LIKE CONCAT(@currentYear, '%')
+					   ORDER BY studentNumber DESC)
+
+	RETURN @id + 1
+END
+GO
+
+GO
 CREATE OR ALTER FUNCTION fnFindCoexistenceID(@schoolSupp CHAR, @familySupp CHAR, @romanticRel CHAR, @familyRel TINYINT)
 RETURNS INT AS
 BEGIN
@@ -130,6 +152,14 @@ END
 GO
 
 GO
+CREATE OR ALTER FUNCTION fnBuscarAnoAberto()
+RETURNS INT AS
+BEGIN
+	RETURN (SELECT schoolYear FROM schSchool.SchoolYear WHERE activeYear = 1)
+END
+GO
+
+GO
 CREATE OR ALTER FUNCTION fnAutenticarUtilizador(@email VARCHAR(50), @password VARCHAR(128))
 RETURNS BIT
 BEGIN
@@ -163,38 +193,6 @@ BEGIN
 							   WHERE s.studentNumber = @studentNumber
 							   AND g.subjectID = @subjectID)
 	RETURN @finalGrade
-END
-GO
-
-GO
-CREATE OR ALTER FUNCTION fnMakeStudentNumber()
-RETURNS INT AS
-BEGIN
-	DECLARE @currentYear INT = CONVERT(VARCHAR(10), (SELECT schoolYear
-													 FROM [schSchool].[SchoolYear]
-													 WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear'))))
-	DECLARE @paddedID VARCHAR(10)
-
-	--Se não existir alunos no ano letivo corrente ira gerar o id inicial
-	IF NOT EXISTS(SELECT TOP 1 * FROM schStudent.Student WHERE studentNumber LIKE CONCAT(@currentYear, '%'))
-	BEGIN
-		SET @paddedID = REPLACE(STR('1', 5), SPACE(1), '0')
-		RETURN CONVERT(INT, CONCAT(@currentYear, @paddedID))
-	END
-
-	DECLARE @id INT = (SELECT TOP 1 studentNumber
-					  FROM schStudent.Student
-					  ORDER BY studentNumber DESC)
-
-	RETURN @id + 1
-END
-GO
-
-GO
-CREATE OR ALTER FUNCTION fnBuscarAnoAberto()
-RETURNS INT AS
-BEGIN
-	RETURN (SELECT schoolYear FROM schSchool.SchoolYear WHERE activeYear = 1)
 END
 GO
 

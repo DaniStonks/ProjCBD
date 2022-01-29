@@ -269,34 +269,6 @@ BEGIN
 END
 GO
 
-/*
-GO
-CREATE OR ALTER PROCEDURE spFecharAno
-AS
-BEGIN
-	TRUNCATE TABLE schSchool.Inscrito
-	TRUNCATE TABLE schSchool.Grade
-	UPDATE schSchool.SchoolYear SET activeYear = 0 WHERE activeYear = 1
-END
-GO
-
-GO
-CREATE OR ALTER PROCEDURE spAbrirAno
-AS
-BEGIN
-	--Erro caso ano recente ainda nao esteja fechado
-	--TO DO
-
-	--Vai buscar o ano previo e insere um novo registo na tabela SchoolYear
-	DECLARE @previousYear INT = (SELECT schoolYear
-								FROM [schSchool].[SchoolYear]
-								WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear')))
-	INSERT INTO schSchool.SchoolYear(schoolYear, activeYear)
-	VALUES(@previousYear + 1, 1)
-END
-GO
-*/
-
 GO
 CREATE OR ALTER PROCEDURE spFecharAno(@schoolYear INT)
 AS

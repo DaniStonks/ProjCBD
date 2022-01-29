@@ -420,7 +420,7 @@ CREATE TABLE schLogs.ClosedInscritos
   logDate DATETIME NOT NULL
 )ON LogsFG;
 
-CREATE TABLE schStudent.LogsPassword
+CREATE TABLE schLogs.LogsPassword
 (
   userEmail VARCHAR(50),
   emailEvent CHAR(1)

@@ -11,7 +11,6 @@
 *	Turma: 2ºL_EI-SW-04			Sala: F356
 *
 ***************************************************/
-
 USE Proj_DB_RS;
 
 DROP TRIGGER schSchool.trg_backup_grades;
@@ -59,24 +58,3 @@ BEGIN
 	END
 END
 GO
-
-
-/* tentativa de criar evento de duraçao de 1 hora para o token
-GO
-CREATE TRIGGER schStudent.trg_token_update
-ON schStudent.UserAutentication
-AFTER UPDATE
-AS
-BEGIN
-	IF((SELECT tokenPassword FROM inserted) IS NOT NULL)
-	BEGIN
-		DECLARE @email VARCHAR(40) = (SELECT userEmail FROM schStudent.UserAutentication)
-
-		CREATE EVENT SESSION event_token
-		ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 HOUR
-		DO
-		UPDATE schStudent.UserAutentication SET tokenPassword = NULL WHERE userEmail = @email
-	END
-END
-GO
-*/

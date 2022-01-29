@@ -115,9 +115,7 @@ AS
 BEGIN
 	DECLARE @currentYear INT
 
-	SET @currentYear = (SELECT schoolYear
-							FROM [schSchool].[SchoolYear]
-							WHERE schoolYearID = (SELECT IDENT_CURRENT('schSchool.SchoolYear')))
+	SET @currentYear = dbo.fnBuscarAnoAberto()
 
 	exec spAddSubjectToYear 'Português', @currentYear
 	exec spAddSubjectToYear 'Inglês', @currentYear
@@ -149,10 +147,12 @@ BEGIN
 	
 	WHILE (@Contador <= 60)
 	BEGIN
+		SET @year = dbo.fnBuscarAnoAberto()
 		exec spMassCreateStudents
 
-		exec spFecharAno
-		exec spAbrirAno
+		exec spFecharAno @year
+		SET @year = @year + 1
+		exec spAbrirAno @year
 
 		exec spTestSubjects
 		exec spInscreverAlunosChumbados
