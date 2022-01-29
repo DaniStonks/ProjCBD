@@ -88,6 +88,8 @@ GO
 GO
 CREATE ROLE EscolaGP;
 
+DENY DELETE ON SCHEMA::schLogs TO EscolaGP;
+
 GRANT CONTROL ON SCHEMA::schLogs TO EscolaGP;
 GRANT INSERT ON SCHEMA::schLogs TO EscolaGP;
 GRANT UPDATE ON SCHEMA::schLogs TO EscolaGP;
@@ -126,6 +128,8 @@ GO
  ************************/
  GO
  CREATE ROLE EscolaMS;
+
+DENY DELETE ON SCHEMA::schLogs TO EscolaMS;
 
 GRANT CONTROL ON OBJECT::schLogs.ClosedInscritos TO EscolaMS;
 GRANT INSERT ON OBJECT::schLogs.ClosedInscritos TO EscolaMS;
@@ -185,7 +189,3 @@ EXEC sp_addrolemember 'UtilizadorGP', 'UserGP';
 EXEC sp_addrolemember 'UtilizadorMS', 'UserMS';
 EXEC sp_addrolemember 'EscolaMS', 'EscMS';
 EXEC sp_addrolemember 'EscolaGP', 'EscGP';
-
-EXECUTE AS USER = 'EscMS'
-SELECT * FROM schStudent.Family
-REVERT
