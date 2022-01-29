@@ -33,8 +33,9 @@ REVERT
 
 --Sucesso pois pode adicionar registos
 EXECUTE AS USER = 'EscMS'
-INSERT INTO schSchool.School
-VALUES('Escola escola1', '1morada')
+INSERT INTO schStudent.Student
+VALUES (202043841,'M',null,
+		null,'Miguel','Santos',1,1,1);
 REVERT
 
 
@@ -42,7 +43,7 @@ REVERT
  * EscolaGP *
  ************/
 EXECUTE AS USER = 'EscGP'
-SELECT * FROM schStudent.view_studentsInformationMS;
+SELECT * FROM schStudent.view_studentsInformationGP;
 REVERT
 
 --Erro pois não tem permissões para ver dados de outras escolas.
@@ -57,8 +58,9 @@ REVERT
 
 --Sucesso pois pode adicionar registos
 EXECUTE AS USER = 'EscGP'
-INSERT INTO schSchool.School
-VALUES('Escola escola2', 'morada2')
+INSERT INTO schStudent.Student
+VALUES (202043341,'M',null,
+		null,'Miguel','Santos',1,1,1);
 REVERT
 
 
@@ -81,8 +83,9 @@ REVERT
 
 --Erro pois UtilizadorGP não tem permissões para adicionar registos
 EXECUTE AS USER = 'UserGP'
-INSERT INTO schSchool.SchoolYear
-VALUES(2239, 1)
+INSERT INTO schStudent.Student
+VALUES (202043341,'M',null,
+		null,'Miguel','Santos',1,1,1);
 REVERT
 
 
@@ -105,8 +108,9 @@ REVERT
 
 --Erro pois UtilizadorMS não tem permissões para adicionar registos
 EXECUTE AS USER = 'UserMS'
-INSERT INTO schSchool.SchoolYear
-VALUES(2039, 1)
+INSERT INTO schStudent.Student
+VALUES (202043341,'M',null,
+		null,'Miguel','Santos',1,1,1);
 REVERT
 
 /*****************
@@ -126,6 +130,7 @@ DELETE FROM schLogs.ClosedGrade WHERE studentNumber = 201700001;
 REVERT
 
 EXECUTE AS USER = 'Admins'
-INSERT INTO schSchool.SchoolYear
-VALUES(2039, 1)
+INSERT INTO schStudent.Student
+VALUES (202033341,'M',null,
+		null,'Miguel','Santos',1,1,1);
 REVERT
