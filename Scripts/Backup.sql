@@ -27,8 +27,12 @@ decide-se fazer backup completo da base de dados todos os dias a noite até as in
 **/
  --Backup completo da base de dados Inicial
  BACKUP DATABASE Proj_DB_RS
- TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\Backup_Initial' 
+ TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\Backup_Initial.bak' 
  WITH  DESCRIPTION = N'Começo do ano letivo'
+
+ --Backup diferencial da base de dados inicial
+ BACKUP LOG PROJ_DB_RS
+ TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffBK_Initial.trn'
 
   --Sequencia de recuperação para o backup inicial da base de dados
  BACKUP LOG Proj_DB_RS
@@ -38,6 +42,9 @@ decide-se fazer backup completo da base de dados todos os dias a noite até as in
  RESTORE DATABASE Proj_DB_RS
  FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\Backup_Initial.bak'
  WITH NORECOVERY
+
+ RESTORE LOG Proj_DB_RS
+ FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffBK_Initial.trn'
 
  RESTORE LOG Proj_DB_RS
  FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TrLogs_01.trn'
@@ -55,6 +62,10 @@ BACKUP LOG Proj_DB_RS
 TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffDaily_001.trn'
 WITH DIFFERENTIAL
 
+BACKUP LOG Proj_DB_RS
+TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffDaily_002.trn'
+WITH DIFFERENTIAL
+
 --backup completo ao final de cada mês
 BACKUP DATABASE Proj_DB_RS
 TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\MonthlyFullBK.bak'
@@ -69,8 +80,12 @@ TO DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Back
  WITH NORECOVERY
 
  RESTORE LOG Proj_DB_RS
+ FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffDaily_002.trn'
+ WITH NORECOVERY
+
+ RESTORE LOG Proj_DB_RS
  FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\DiffDaily_001.trn'
- WITH FILE = 1, NORECOVERY
+ WITH NORECOVERY
 
  RESTORE LOG Proj_DB_RS
  FROM DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TrLogs_02.trn'
