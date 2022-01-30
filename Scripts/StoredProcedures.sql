@@ -134,6 +134,9 @@ BEGIN
 END
 GO
 
+/**
+Esta procedure implementa a RF02 - "O sistema deverá permitir registar cada aluno nas disciplinas para um determinado ano letivo"
+**/
 GO
 CREATE OR ALTER PROCEDURE spInscreverAlunos(@subjectName NVARCHAR(20), @studentNumber INT, @paidClasses CHAR(1), @weekStudyTime TINYINT)
 AS
@@ -237,6 +240,9 @@ BEGIN
 	END
 GO
 
+/**
+Esta procedure implementa a RF03 - "O sistema deverá permitir fazer a gestão das notas "
+**/
 GO
 CREATE OR ALTER PROCEDURE spLancarNotas(@studentNumber INT, @subjectName VARCHAR(20), @grade1 FLOAT, @grade2 FLOAT, @grade3 FLOAT, @classFailures TINYINT, @subjectAbsences TINYINT)
 AS
