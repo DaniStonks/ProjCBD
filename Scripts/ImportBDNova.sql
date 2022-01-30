@@ -60,7 +60,7 @@ CREATE TABLE Temp
 
 --Carregar os dados para a tabela temporaria
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2017 student-BD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2017 student-BD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -100,7 +100,7 @@ SELECT [studentGuardian], [familyStatus],
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2017 student-CBD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2017 student-CBD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -109,7 +109,7 @@ WITH
     TABLOCK
 )
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2017 student-MAT1.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2017 student-MAT1.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -338,7 +338,7 @@ CREATE TABLE Temp
 
 --Carregar os dados para a tabela temporaria
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2018 student-BD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2018 student-BD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -378,7 +378,7 @@ SELECT [studentGuardian], [familyStatus],
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2018 student-CBD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2018 student-CBD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -387,7 +387,7 @@ WITH
     TABLOCK
 )
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2018 student-MAT1.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2018 student-MAT1.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -606,7 +606,7 @@ CREATE TABLE Temp
 
 --Carregar os dados para a tabela temporaria
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2019 student-BD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2019 student-BD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -646,7 +646,7 @@ SELECT [studentGuardian], [familyStatus],
 FROM dbo.Temp;
 
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2019 student-CBD.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2019 student-CBD.csv'
 WITH
 (
 	FIRSTROW = 2,
@@ -655,7 +655,7 @@ WITH
     TABLOCK
 )
 BULK INSERT dbo.Temp
-FROM 'C:\Users\Daniel\Desktop\Coisas do ips\2ºAno\1ºSemestre\CBD\Projeto\OldDataset\2019 student-MAT1.csv'
+FROM 'C:\Users\rafae\Documents\SQL Server Management Studio\ProjCBD\OldDataset\2019 student-MAT1.csv'
 WITH
 (
 	FIRSTROW = 2,

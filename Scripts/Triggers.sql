@@ -39,6 +39,9 @@ BEGIN
 END
 GO
 
+/**
+este trigger implmenta a RF11 - "O sistema deverá notificar o utilizador, sempre que este mude a password, por email"
+**/
 DROP TRIGGER schStudent.trg_email_user_password_change;
 GO
 CREATE TRIGGER schStudent.trg_email_user_password_change

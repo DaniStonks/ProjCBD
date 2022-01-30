@@ -47,6 +47,9 @@ BEGIN
 END
 GO
 
+/***
+Esta store procedure implementa a RF07 - para que o utilizador se registe no sistema de autenticação
+***/
 GO
 CREATE OR ALTER PROCEDURE spRegistarUtilizadorAutenticacao(@password VARCHAR(20), @id INT)
 AS
@@ -89,6 +92,9 @@ BEGIN
 END
 GO
 
+/***
+Esta store procedure implementa a RF07 - "O sistema deverá permitir que o encarregado de educação possa visualizar as notas do seu educando"
+***/
 CREATE OR ALTER PROCEDURE spVerNotasAluno(@email VARCHAR(50), @password VARCHAR(20))
 AS
 BEGIN
@@ -154,6 +160,10 @@ BEGIN
 END
 GO
 
+/**
+esta store procedure implementa a RF10 - "O sistema deverá permitir fazer a alteração da password do utilizador 
+desde que este indique a password antiga corretamente e a nova password 2 vezes"
+**/
 GO
 CREATE OR ALTER PROCEDURE spMudarPassword(@email VARCHAR(50), @password VARCHAR(20), @newPassword VARCHAR(128), @newPassword2 VARCHAR(128))
 AS
@@ -177,6 +187,11 @@ BEGIN
 	END
 GO
 
+/**
+esta store procedure implementa a RF09 - "O sistema deverá permitir fazer a recuperação da password, desde que
+o aluno ou o encarregado de educação dentro de 1h troquem a password e coloquem o codigo solicitado"
+O que esta procedure vai fazer é criação do token da password
+**/
 GO
 CREATE OR ALTER PROCEDURE spCriarTokenPassword(@email VARCHAR(50))
 AS
@@ -192,6 +207,10 @@ BEGIN
 END
 GO
 
+/**
+esta store procedure implementa a RF09 - "O sistema deverá permitir fazer a recuperação da password, desde que
+o aluno ou o encarregado de educação dentro de 1h troquem a password e coloquem o codigo solicitado"
+**/
 GO
 CREATE OR ALTER PROCEDURE spMudarPasswordToken(@email VARCHAR(50), @token INT, @newPassword VARCHAR(128), @newPassword2 VARCHAR(128))
 AS

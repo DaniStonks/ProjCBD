@@ -159,6 +159,10 @@ BEGIN
 END
 GO
 
+/**
+Esta store procedure implementa a RF08 - "O sistema deverá permitir a autenticação ao 
+sistema por parte do aluno e do encarregado de educação através do email e da password"
+**/
 GO
 CREATE OR ALTER FUNCTION fnAutenticarUtilizador(@email VARCHAR(50), @password VARCHAR(128))
 RETURNS BIT
