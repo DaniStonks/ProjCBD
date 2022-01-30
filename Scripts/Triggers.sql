@@ -13,6 +13,9 @@
 ***************************************************/
 USE Proj_DB_RS;
 
+/**
+Esta procedure implementa a RF05 - "O sistema deverá reter informação de anos letivos passados relativamente as notas e as inscrições dos alunos"
+**/
 DROP TRIGGER schSchool.trg_backup_grades;
 GO
 CREATE TRIGGER schSchool.trg_backup_grades
@@ -27,6 +30,9 @@ BEGIN
 END
 GO
 
+/**
+Esta procedure implementa a RF05 - "O sistema deverá reter informação de anos letivos passados relativamente as notas e as inscrições dos alunos"
+**/
 DROP TRIGGER schSchool.trg_backup_inscritos;
 GO
 CREATE TRIGGER schSchool.trg_backup_inscritos
