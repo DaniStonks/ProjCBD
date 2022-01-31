@@ -1,0 +1,560 @@
+﻿
+subjectID,subjectName,schoolYearID
+1,CBD,1
+2,BD,1
+3,MAT1,1
+4,CBD,2
+5,BD,2
+6,MAT1,2
+7,CBD,3
+8,BD,3
+9,MAT1,3
+10,Português,4
+11,Inglês,4
+12,Frances,4
+13,Matemática,4
+14,Ciências,4
+15,Físico-química,4
+16,Educação Visual,4
+17,TIC,4
+18,Educação Física,4
+19,Português,5
+20,Inglês,5
+21,Frances,5
+22,Matemática,5
+23,Ciências,5
+24,Físico-química,5
+25,Educação Visual,5
+26,TIC,5
+27,Educação Física,5
+28,Português,6
+29,Inglês,6
+30,Frances,6
+31,Matemática,6
+32,Ciências,6
+33,Físico-química,6
+34,Educação Visual,6
+35,TIC,6
+36,Educação Física,6
+37,Português,7
+38,Inglês,7
+39,Frances,7
+40,Matemática,7
+41,Ciências,7
+42,Físico-química,7
+43,Educação Visual,7
+44,TIC,7
+45,Educação Física,7
+46,Português,8
+47,Inglês,8
+48,Frances,8
+49,Matemática,8
+50,Ciências,8
+51,Físico-química,8
+52,Educação Visual,8
+53,TIC,8
+54,Educação Física,8
+55,Português,9
+56,Inglês,9
+57,Frances,9
+58,Matemática,9
+59,Ciências,9
+60,Físico-química,9
+61,Educação Visual,9
+62,TIC,9
+63,Educação Física,9
+64,Português,10
+65,Inglês,10
+66,Frances,10
+67,Matemática,10
+68,Ciências,10
+69,Físico-química,10
+70,Educação Visual,10
+71,TIC,10
+72,Educação Física,10
+73,Português,11
+74,Inglês,11
+75,Frances,11
+76,Matemática,11
+77,Ciências,11
+78,Físico-química,11
+79,Educação Visual,11
+80,TIC,11
+81,Educação Física,11
+82,Português,12
+83,Inglês,12
+84,Frances,12
+85,Matemática,12
+86,Ciências,12
+87,Físico-química,12
+88,Educação Visual,12
+89,TIC,12
+90,Educação Física,12
+91,Português,13
+92,Inglês,13
+93,Frances,13
+94,Matemática,13
+95,Ciências,13
+96,Físico-química,13
+97,Educação Visual,13
+98,TIC,13
+99,Educação Física,13
+100,Português,14
+101,Inglês,14
+102,Frances,14
+103,Matemática,14
+104,Ciências,14
+105,Físico-química,14
+106,Educação Visual,14
+107,TIC,14
+108,Educação Física,14
+109,Português,15
+110,Inglês,15
+111,Frances,15
+112,Matemática,15
+113,Ciências,15
+114,Físico-química,15
+115,Educação Visual,15
+116,TIC,15
+117,Educação Física,15
+118,Português,16
+119,Inglês,16
+120,Frances,16
+121,Matemática,16
+122,Ciências,16
+123,Físico-química,16
+124,Educação Visual,16
+125,TIC,16
+126,Educação Física,16
+127,Português,17
+128,Inglês,17
+129,Frances,17
+130,Matemática,17
+131,Ciências,17
+132,Físico-química,17
+133,Educação Visual,17
+134,TIC,17
+135,Educação Física,17
+136,Português,18
+137,Inglês,18
+138,Frances,18
+139,Matemática,18
+140,Ciências,18
+141,Físico-química,18
+142,Educação Visual,18
+143,TIC,18
+144,Educação Física,18
+145,Português,19
+146,Inglês,19
+147,Frances,19
+148,Matemática,19
+149,Ciências,19
+150,Físico-química,19
+151,Educação Visual,19
+152,TIC,19
+153,Educação Física,19
+154,Português,20
+155,Inglês,20
+156,Frances,20
+157,Matemática,20
+158,Ciências,20
+159,Físico-química,20
+160,Educação Visual,20
+161,TIC,20
+162,Educação Física,20
+163,Português,21
+164,Inglês,21
+165,Frances,21
+166,Matemática,21
+167,Ciências,21
+168,Físico-química,21
+169,Educação Visual,21
+170,TIC,21
+171,Educação Física,21
+172,Português,22
+173,Inglês,22
+174,Frances,22
+175,Matemática,22
+176,Ciências,22
+177,Físico-química,22
+178,Educação Visual,22
+179,TIC,22
+180,Educação Física,22
+181,Português,23
+182,Inglês,23
+183,Frances,23
+184,Matemática,23
+185,Ciências,23
+186,Físico-química,23
+187,Educação Visual,23
+188,TIC,23
+189,Educação Física,23
+190,Português,24
+191,Inglês,24
+192,Frances,24
+193,Matemática,24
+194,Ciências,24
+195,Físico-química,24
+196,Educação Visual,24
+197,TIC,24
+198,Educação Física,24
+199,Português,25
+200,Inglês,25
+201,Frances,25
+202,Matemática,25
+203,Ciências,25
+204,Físico-química,25
+205,Educação Visual,25
+206,TIC,25
+207,Educação Física,25
+208,Português,26
+209,Inglês,26
+210,Frances,26
+211,Matemática,26
+212,Ciências,26
+213,Físico-química,26
+214,Educação Visual,26
+215,TIC,26
+216,Educação Física,26
+217,Português,27
+218,Inglês,27
+219,Frances,27
+220,Matemática,27
+221,Ciências,27
+222,Físico-química,27
+223,Educação Visual,27
+224,TIC,27
+225,Educação Física,27
+226,Português,28
+227,Inglês,28
+228,Frances,28
+229,Matemática,28
+230,Ciências,28
+231,Físico-química,28
+232,Educação Visual,28
+233,TIC,28
+234,Educação Física,28
+235,Português,29
+236,Inglês,29
+237,Frances,29
+238,Matemática,29
+239,Ciências,29
+240,Físico-química,29
+241,Educação Visual,29
+242,TIC,29
+243,Educação Física,29
+244,Português,30
+245,Inglês,30
+246,Frances,30
+247,Matemática,30
+248,Ciências,30
+249,Físico-química,30
+250,Educação Visual,30
+251,TIC,30
+252,Educação Física,30
+253,Português,31
+254,Inglês,31
+255,Frances,31
+256,Matemática,31
+257,Ciências,31
+258,Físico-química,31
+259,Educação Visual,31
+260,TIC,31
+261,Educação Física,31
+262,Português,32
+263,Inglês,32
+264,Frances,32
+265,Matemática,32
+266,Ciências,32
+267,Físico-química,32
+268,Educação Visual,32
+269,TIC,32
+270,Educação Física,32
+271,Português,33
+272,Inglês,33
+273,Frances,33
+274,Matemática,33
+275,Ciências,33
+276,Físico-química,33
+277,Educação Visual,33
+278,TIC,33
+279,Educação Física,33
+280,Português,34
+281,Inglês,34
+282,Frances,34
+283,Matemática,34
+284,Ciências,34
+285,Físico-química,34
+286,Educação Visual,34
+287,TIC,34
+288,Educação Física,34
+289,Português,35
+290,Inglês,35
+291,Frances,35
+292,Matemática,35
+293,Ciências,35
+294,Físico-química,35
+295,Educação Visual,35
+296,TIC,35
+297,Educação Física,35
+298,Português,36
+299,Inglês,36
+300,Frances,36
+301,Matemática,36
+302,Ciências,36
+303,Físico-química,36
+304,Educação Visual,36
+305,TIC,36
+306,Educação Física,36
+307,Português,37
+308,Inglês,37
+309,Frances,37
+310,Matemática,37
+311,Ciências,37
+312,Físico-química,37
+313,Educação Visual,37
+314,TIC,37
+315,Educação Física,37
+316,Português,38
+317,Inglês,38
+318,Frances,38
+319,Matemática,38
+320,Ciências,38
+321,Físico-química,38
+322,Educação Visual,38
+323,TIC,38
+324,Educação Física,38
+325,Português,39
+326,Inglês,39
+327,Frances,39
+328,Matemática,39
+329,Ciências,39
+330,Físico-química,39
+331,Educação Visual,39
+332,TIC,39
+333,Educação Física,39
+334,Português,40
+335,Inglês,40
+336,Frances,40
+337,Matemática,40
+338,Ciências,40
+339,Físico-química,40
+340,Educação Visual,40
+341,TIC,40
+342,Educação Física,40
+343,Português,41
+344,Inglês,41
+345,Frances,41
+346,Matemática,41
+347,Ciências,41
+348,Físico-química,41
+349,Educação Visual,41
+350,TIC,41
+351,Educação Física,41
+352,Português,42
+353,Inglês,42
+354,Frances,42
+355,Matemática,42
+356,Ciências,42
+357,Físico-química,42
+358,Educação Visual,42
+359,TIC,42
+360,Educação Física,42
+361,Português,43
+362,Inglês,43
+363,Frances,43
+364,Matemática,43
+365,Ciências,43
+366,Físico-química,43
+367,Educação Visual,43
+368,TIC,43
+369,Educação Física,43
+370,Português,44
+371,Inglês,44
+372,Frances,44
+373,Matemática,44
+374,Ciências,44
+375,Físico-química,44
+376,Educação Visual,44
+377,TIC,44
+378,Educação Física,44
+379,Português,45
+380,Inglês,45
+381,Frances,45
+382,Matemática,45
+383,Ciências,45
+384,Físico-química,45
+385,Educação Visual,45
+386,TIC,45
+387,Educação Física,45
+388,Português,46
+389,Inglês,46
+390,Frances,46
+391,Matemática,46
+392,Ciências,46
+393,Físico-química,46
+394,Educação Visual,46
+395,TIC,46
+396,Educação Física,46
+397,Português,47
+398,Inglês,47
+399,Frances,47
+400,Matemática,47
+401,Ciências,47
+402,Físico-química,47
+403,Educação Visual,47
+404,TIC,47
+405,Educação Física,47
+406,Português,48
+407,Inglês,48
+408,Frances,48
+409,Matemática,48
+410,Ciências,48
+411,Físico-química,48
+412,Educação Visual,48
+413,TIC,48
+414,Educação Física,48
+415,Português,49
+416,Inglês,49
+417,Frances,49
+418,Matemática,49
+419,Ciências,49
+420,Físico-química,49
+421,Educação Visual,49
+422,TIC,49
+423,Educação Física,49
+424,Português,50
+425,Inglês,50
+426,Frances,50
+427,Matemática,50
+428,Ciências,50
+429,Físico-química,50
+430,Educação Visual,50
+431,TIC,50
+432,Educação Física,50
+433,Português,51
+434,Inglês,51
+435,Frances,51
+436,Matemática,51
+437,Ciências,51
+438,Físico-química,51
+439,Educação Visual,51
+440,TIC,51
+441,Educação Física,51
+442,Português,52
+443,Inglês,52
+444,Frances,52
+445,Matemática,52
+446,Ciências,52
+447,Físico-química,52
+448,Educação Visual,52
+449,TIC,52
+450,Educação Física,52
+451,Português,53
+452,Inglês,53
+453,Frances,53
+454,Matemática,53
+455,Ciências,53
+456,Físico-química,53
+457,Educação Visual,53
+458,TIC,53
+459,Educação Física,53
+460,Português,54
+461,Inglês,54
+462,Frances,54
+463,Matemática,54
+464,Ciências,54
+465,Físico-química,54
+466,Educação Visual,54
+467,TIC,54
+468,Educação Física,54
+469,Português,55
+470,Inglês,55
+471,Frances,55
+472,Matemática,55
+473,Ciências,55
+474,Físico-química,55
+475,Educação Visual,55
+476,TIC,55
+477,Educação Física,55
+478,Português,56
+479,Inglês,56
+480,Frances,56
+481,Matemática,56
+482,Ciências,56
+483,Físico-química,56
+484,Educação Visual,56
+485,TIC,56
+486,Educação Física,56
+487,Português,57
+488,Inglês,57
+489,Frances,57
+490,Matemática,57
+491,Ciências,57
+492,Físico-química,57
+493,Educação Visual,57
+494,TIC,57
+495,Educação Física,57
+496,Português,58
+497,Inglês,58
+498,Frances,58
+499,Matemática,58
+500,Ciências,58
+501,Físico-química,58
+502,Educação Visual,58
+503,TIC,58
+504,Educação Física,58
+505,Português,59
+506,Inglês,59
+507,Frances,59
+508,Matemática,59
+509,Ciências,59
+510,Físico-química,59
+511,Educação Visual,59
+512,TIC,59
+513,Educação Física,59
+514,Português,60
+515,Inglês,60
+516,Frances,60
+517,Matemática,60
+518,Ciências,60
+519,Físico-química,60
+520,Educação Visual,60
+521,TIC,60
+522,Educação Física,60
+523,Português,1
+524,Inglês,1
+525,Frances,1
+526,Matemática,1
+527,Ciências,1
+528,Físico-química,1
+529,Educação Visual,1
+530,TIC,1
+531,Educação Física,1
+532,Português,2
+533,Inglês,2
+534,Frances,2
+535,Matemática,2
+536,Ciências,2
+537,Físico-química,2
+538,Educação Visual,2
+539,TIC,2
+540,Educação Física,2
+541,Português,3
+542,Inglês,3
+543,Frances,3
+544,Matemática,3
+545,Ciências,3
+546,Físico-química,3
+547,Educação Visual,3
+548,TIC,3
+549,Educação Física,3
+550,Português,61
+551,Inglês,61
+552,Frances,61
+553,Matemática,61
+554,Ciências,61
+555,Físico-química,61
+556,Educação Visual,61
+557,TIC,61
+558,Educação Física,61
